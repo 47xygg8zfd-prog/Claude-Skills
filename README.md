@@ -18,7 +18,7 @@ A complete toolkit for product managers using Claude — 19 skills, workflow gui
 | [`ai-features/`](ai-features/) | Framework for scoping, evaluating, and shipping AI features |
 | [`case-study/`](case-study/) | End-to-end PM case study showing all skills used on one scenario |
 | [`thinking/`](thinking/) | PM principles, hard decisions, 3 product teardowns, and anti-patterns |
-| [`agents/`](agents/) | Working Python agents for research synthesis, sprint reports, PRDs, and competitive intel |
+| [`agents/`](agents/) | 22 working Python agents across PM, design, engineering, leadership, and strategy roles — plus PDLC/SDLC orchestrators |
 | [`frameworks/`](frameworks/) | Strategic and product thinking frameworks: HEART, Wardley, Kano, OST, Playing to Win, and more |
 | [`CLAUDE.md`](CLAUDE.md) | Fill-in-once context file that makes every skill smarter |
 
