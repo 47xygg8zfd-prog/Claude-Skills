@@ -19,6 +19,7 @@ A complete toolkit for product managers using Claude — 19 skills, workflow gui
 | [`case-study/`](case-study/) | End-to-end PM case study showing all skills used on one scenario |
 | [`thinking/`](thinking/) | PM principles, hard decisions, 3 product teardowns, and anti-patterns |
 | [`agents/`](agents/) | Working Python agents for research synthesis, sprint reports, PRDs, and competitive intel |
+| [`frameworks/`](frameworks/) | Strategic and product thinking frameworks: HEART, Wardley, Kano, OST, Playing to Win, and more |
 | [`CLAUDE.md`](CLAUDE.md) | Fill-in-once context file that makes every skill smarter |
 
 ---
