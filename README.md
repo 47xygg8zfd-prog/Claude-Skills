@@ -1,6 +1,6 @@
 # PM Skills for Claude
 
-A complete toolkit for product managers using Claude — 15 skills, workflow guides, a prompt library, example outputs, and tool integrations.
+A complete toolkit for product managers using Claude — 19 skills, workflow guides, a prompt library, example outputs, tool integrations, and working agents.
 
 ---
 
@@ -17,7 +17,8 @@ A complete toolkit for product managers using Claude — 15 skills, workflow gui
 | [`metrics/`](metrics/) | KPI definitions, benchmarks, and Snowflake SQL by product area |
 | [`ai-features/`](ai-features/) | Framework for scoping, evaluating, and shipping AI features |
 | [`case-study/`](case-study/) | End-to-end PM case study showing all skills used on one scenario |
-| [`thinking/`](thinking/) | PM principles, hard decisions, product teardown, and anti-patterns |
+| [`thinking/`](thinking/) | PM principles, hard decisions, 3 product teardowns, and anti-patterns |
+| [`agents/`](agents/) | Working Python agents for research synthesis, sprint reports, PRDs, and competitive intel |
 | [`CLAUDE.md`](CLAUDE.md) | Fill-in-once context file that makes every skill smarter |
 
 ---

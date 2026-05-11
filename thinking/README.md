@@ -8,7 +8,9 @@ Essays and frameworks that show how I approach product decisions — not just th
 |------|-----------|
 | [principles.md](principles.md) | My core beliefs about product decision-making |
 | [hard-decisions.md](hard-decisions.md) | Three narratives about genuinely difficult calls |
-| [spotify-teardown.md](spotify-teardown.md) | Structured product critique of Spotify |
+| [spotify-teardown.md](spotify-teardown.md) | Structured product critique of Spotify (consumer / marketplace) |
+| [linear-teardown.md](linear-teardown.md) | Structured product critique of Linear (B2B SaaS) |
+| [airbnb-teardown.md](airbnb-teardown.md) | Structured product critique of Airbnb (marketplace) |
 | [anti-patterns.md](anti-patterns.md) | Common PM mistakes, why they happen, and how to avoid them |
 
 ## Why This Exists
