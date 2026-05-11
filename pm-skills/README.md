@@ -21,6 +21,10 @@ A complete collection of Claude skills tailored for product management workflows
 | `release-notes` | Audience-tailored release notes and changelogs | "write release notes", "draft a changelog", "summarize what shipped" |
 | `stakeholder-updates` | Status updates, escalations, DACI/RACI tables | "write a stakeholder update", "escalation memo", "write a DACI" |
 | `competitive-analysis` | Teardowns, feature matrices, battlecards, win/loss | "competitive analysis for", "battlecard for", "compare us to" |
+| `go-to-market` | Launch plans, rollout phases, channel strategy, enablement | "write a GTM plan", "plan the launch for", "launch readiness for..." |
+| `experiment-design` | A/B test design, sample sizes, result interpretation | "design an A/B test for", "sample size for", "interpret these results..." |
+| `north-star-metric` | Define and defend the single most important metric | "define our north star metric", "what should our north star be..." |
+| `product-strategy` | Strategy one-pagers, where to play, how to win | "write a product strategy", "strategic one-pager for", "where should we focus" |
 
 ## How to Install
 
