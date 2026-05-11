@@ -25,6 +25,7 @@ A complete collection of Claude skills tailored for product management workflows
 | `experiment-design` | A/B test design, sample sizes, result interpretation | "design an A/B test for", "sample size for", "interpret these results..." |
 | `north-star-metric` | Define and defend the single most important metric | "define our north star metric", "what should our north star be..." |
 | `product-strategy` | Strategy one-pagers, where to play, how to win | "write a product strategy", "strategic one-pager for", "where should we focus" |
+| `ui-designer` | Design specs, user flows, screen specs, component inventory, accessibility notes | "design this feature", "spec out the UX", "write design requirements for..." |
 
 ## How to Install
 

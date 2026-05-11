@@ -10,6 +10,13 @@ Working Python agents built with the Anthropic SDK that automate common PM workf
 | [sprint-reporter](sprint_reporter.py) | Takes ticket data, writes a stakeholder-ready status update | ~15s |
 | [prd-drafter](prd_drafter.py) | Takes a brief or ticket description, produces a full PRD draft | ~45s |
 | [competitive-intel](competitive_intel.py) | Takes competitor info and recent updates, produces a briefing | ~30s |
+| [architecture-designer](architecture_designer.py) | Takes a PRD or brief, produces a system architecture doc with components, APIs, and trade-offs | ~45s |
+| [ui-designer](ui_designer.py) | Takes a PRD or brief, produces design specs with user flows, screen specs, and component inventory | ~45s |
+| [okr-drafter](okr_drafter.py) | Takes strategic context, drafts OKRs with scoring guidance and alignment check | ~30s |
+| [release-notes-writer](release_notes_writer.py) | Takes tickets or git log, writes audience-tailored release notes (user / eng / exec) | ~30s |
+| [experiment-designer](experiment_designer.py) | Takes a hypothesis, produces a full A/B experiment design with sample size and analysis plan | ~30s |
+| [feature-prioritizer](feature_prioritizer.py) | Takes a feature list, produces a RICE-scored backlog with trade-off analysis | ~45s |
+| [stakeholder-updater](stakeholder_updater.py) | Takes project status, writes updates for exec / team / customer / board | ~30s |
 
 ## Setup
 
