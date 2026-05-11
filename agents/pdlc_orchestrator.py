@@ -37,8 +37,10 @@ MODEL = "claude-sonnet-4-6"
 ALL_STAGES = [
     "strategy",
     "discovery",
+    "ux-research",
     "prd",
     "experiment",
+    "data-science",
     "design",
     "architecture",
     "tech-lead",
@@ -52,8 +54,10 @@ ALL_STAGES = [
 STAGE_LABELS = {
     "strategy": "CPO — Strategic Framing",
     "discovery": "PM — Discovery Brief",
+    "ux-research": "UX Researcher — Research Synthesis",
     "prd": "PM — Product Requirements",
     "experiment": "PM — Experiment Design",
+    "data-science": "Data Scientist — Measurement Plan",
     "design": "UI Designer — Design Spec",
     "architecture": "Technical Architect — System Design",
     "tech-lead": "Tech Lead — Implementation Review",
@@ -120,6 +124,42 @@ If we [action], then [user segment] will [outcome], because [mechanism].
 ## Recommended Next Step
 [Specific action: interview 5 users / pull cohort data / run fake door test]""",
 
+    "ux-research": """You are a senior UX researcher synthesizing user research for a feature.
+
+Given a discovery brief and strategic context, produce a focused research synthesis:
+
+# UX Research Synthesis: [Feature]
+
+## What We Need to Learn
+[2-3 research questions that, if answered, would de-risk the PRD]
+
+## Assumed User Profile
+**Who**: [Target user — role, context, experience level]
+**Their current behavior**: [How they accomplish this today — tool, workaround, frequency]
+**Their stated goal**: [What they say they want]
+**Their underlying goal**: [What they actually need — may differ]
+
+## Assumed Pain Points (ranked)
+| Pain | Frequency | Intensity | Evidence / Source |
+|------|-----------|-----------|------------------|
+| [pain] | Daily/Weekly/Occasional | High/Med/Low | [interview quote / behavioral data / assumption] |
+
+## Jobs to Be Done
+| When... | I want to... | So I can... |
+|---------|-------------|------------|
+| [situation] | [motivation] | [outcome] |
+
+## Key Insights for the PRD
+1. **[Insight]**: [What this means for requirements]
+2. **[Insight]**: [Implication]
+3. **[Insight]**: [Implication]
+
+## Risks If We Skip Research
+[What we're assuming without validation — and what could go wrong]
+
+## Recommended Research (if time allows)
+[1-2 specific research activities that would most de-risk the build — with time estimate]""",
+
     "prd": """You are a senior PM writing a product requirements document.
 
 Given discovery findings and strategic context, produce a focused PRD:
@@ -181,6 +221,48 @@ Given a PRD, produce a focused experiment design:
 - **Ship**: primary ↑ ≥ MDE, guardrails stable, p < 0.05
 - **Iterate**: directionally positive, below MDE
 - **Kill**: flat/negative p < 0.05, OR guardrail breached""",
+
+    "data-science": """You are a senior data scientist defining how a feature will be measured.
+
+Given a PRD and experiment design, produce a measurement plan:
+
+# Data Science Brief: [Feature]
+
+## North Star Metric
+**Metric**: [Name]
+**Definition**: [Exact calculation — who, what action, over what window]
+**Baseline**: [Current value or "requires instrumentation before launch"]
+**Target**: [Goal and timeframe]
+
+## Metric Hierarchy
+| Level | Metric | Definition | Why it matters |
+|-------|--------|-----------|---------------|
+| Primary | [metric] | [exact calc] | [ties to user value] |
+| Leading indicator | [metric] | [exact calc] | [predicts primary] |
+| Guardrail | [metric] | [exact calc] | [must not degrade] |
+
+## Instrumentation Needed
+| Event | Trigger | Key properties |
+|-------|---------|---------------|
+| `[event_name]` | [when it fires] | `{ user_id, [prop] }` |
+
+## Experiment Readiness
+- Baseline stable? [Yes / Needs 2 weeks of clean data first]
+- MDE at current traffic: [X% lift detectable in Y weeks at 50/50 split]
+- Recommended test duration: [N weeks minimum]
+
+## Key SQL
+```sql
+-- Primary metric
+SELECT DATE_TRUNC('week', event_time) AS week,
+       COUNT(DISTINCT user_id) AS [metric]
+FROM events
+WHERE event_type = '[event]'
+GROUP BY 1 ORDER BY 1
+```
+
+## Data Risks
+- [Risk to measurement validity — instrumentation gap, selection bias, etc.]""",
 
     "design": """You are a senior product designer producing a design spec.
 
@@ -518,16 +600,18 @@ def build_input(stage: str, goal: str, outputs: dict[str, str]) -> str:
 
     context_stages = {
         "discovery": ["strategy"],
-        "prd": ["strategy", "discovery"],
+        "ux-research": ["strategy", "discovery"],
+        "prd": ["strategy", "discovery", "ux-research"],
         "experiment": ["prd"],
-        "design": ["prd"],
+        "data-science": ["prd", "experiment"],
+        "design": ["prd", "ux-research"],
         "architecture": ["prd", "design"],
         "tech-lead": ["prd", "architecture"],
         "backend": ["prd", "architecture", "tech-lead"],
         "frontend": ["prd", "design", "architecture", "tech-lead"],
         "qa": ["prd", "backend", "frontend", "tech-lead"],
         "marketing": ["strategy", "prd", "design"],
-        "exec-update": ["strategy", "prd", "experiment", "architecture", "marketing"],
+        "exec-update": ["strategy", "prd", "experiment", "data-science", "architecture", "marketing"],
     }
 
     prior = context_stages.get(stage, [])
