@@ -13,6 +13,7 @@ A complete toolkit for product managers using Claude — 15 skills, workflow gui
 | [`workflows/`](workflows/) | End-to-end guides for chaining skills together |
 | [`prompts/`](prompts/) | 16 copy-paste prompts for one-off tasks |
 | [`integrations/`](integrations/) | MCP config snippets for Jira, Linear, Notion, Confluence, and Slack |
+| [`templates/`](templates/) | Fillable markdown templates for PRDs, OKRs, retros, and more |
 | [`CLAUDE.md`](CLAUDE.md) | Fill-in-once context file that makes every skill smarter |
 
 ---
