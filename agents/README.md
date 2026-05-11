@@ -10,7 +10,7 @@ Run these for end-to-end workflows — they call each specialist in sequence, pa
 
 | Agent | What It Does |
 |-------|-------------|
-| [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 11 stages from strategy through QA and exec update |
+| [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 12 stages from strategy through marketing and exec update |
 | [pm-agent](pm_agent.py) | **PM workflow** — discovery → PRD → stories → experiment → stakeholder update |
 | [eng-team](eng_team.py) | **Engineering team** — tech lead → backend → frontend → QA |
 
@@ -27,7 +27,8 @@ Strategy (CPO)
                                         ├── Backend Plan
                                         ├── Frontend Plan
                                         └── QA Test Plan
-                                                └── Exec Update (CPO / Director PM)
+                                                └── Marketing (Product Marketer)
+                                                        └── Exec Update (CPO / Director PM)
 ```
 
 ```bash
@@ -65,6 +66,7 @@ python pdlc_orchestrator.py --goal "..." --from-stage design
 |-------|-------------|-----------|
 | [ui-designer](ui_designer.py) | Design spec, user flows, component inventory | — |
 | [codebase-reader](codebase_reader.py) | Walks a local directory and produces architecture maps, onboarding guides, or file explanations | full / architecture / onboarding / file |
+| [product-marketer](product_marketer.py) | Positioning, feature announcements, launch emails, blog posts, battlecards, social copy | positioning / announcement / email / blog / battlecard / social / all |
 
 ---
 
