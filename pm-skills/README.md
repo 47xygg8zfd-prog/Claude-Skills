@@ -28,6 +28,8 @@ A complete collection of Claude skills tailored for product management workflows
 | `ui-designer` | Design specs, user flows, screen specs, component inventory, accessibility notes | "design this feature", "spec out the UX", "write design requirements for..." |
 | `codebase-reader` | Read, map, and explain any codebase — architecture, onboarding guide, file explanations | "read the codebase", "explain this repo", "I'm new to this project", "map the architecture" |
 | `product-marketer` | Positioning frameworks, launch announcements, emails, blog posts, battlecards, social copy | "write the launch copy", "position this feature", "write the announcement for", "battlecard for..." |
+| `ux-researcher` | Research plans, discussion guides, synthesis reports, personas, journey maps, usability findings | "synthesize these interviews", "write a discussion guide", "map the user journey", "create a persona" |
+| `data-scientist` | Measurement plans, analysis plans, experiment results, ML scoping, data storytelling | "how should we measure this", "interpret these results", "is this significant", "scope a model for..." |
 
 ## How to Install
 

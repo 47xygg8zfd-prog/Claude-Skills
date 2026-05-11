@@ -10,7 +10,7 @@ Run these for end-to-end workflows — they call each specialist in sequence, pa
 
 | Agent | What It Does |
 |-------|-------------|
-| [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 12 stages from strategy through marketing and exec update |
+| [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 14 stages from strategy through UX research, data science, marketing, and exec update |
 | [pm-agent](pm_agent.py) | **PM workflow** — discovery → PRD → stories → experiment → stakeholder update |
 | [eng-team](eng_team.py) | **Engineering team** — tech lead → backend → frontend → QA |
 
@@ -19,16 +19,18 @@ Run these for end-to-end workflows — they call each specialist in sequence, pa
 ```
 Strategy (CPO)
     └── Discovery (PM)
-            └── PRD (PM)
-                    ├── Experiment Design (PM)
-                    ├── Design Spec (UI Designer)
-                    └── Architecture (Technical Architect)
-                                └── Tech Lead Review
-                                        ├── Backend Plan
-                                        ├── Frontend Plan
-                                        └── QA Test Plan
-                                                └── Marketing (Product Marketer)
-                                                        └── Exec Update (CPO / Director PM)
+            └── UX Research
+                    └── PRD (PM)
+                            ├── Experiment Design (PM)
+                            │       └── Data Science (Measurement Plan)
+                            └── Design Spec (UI Designer)
+                                    └── Architecture (Technical Architect)
+                                            └── Tech Lead Review
+                                                    ├── Backend Plan
+                                                    ├── Frontend Plan
+                                                    └── QA Test Plan
+                                                            └── Marketing (Product Marketer)
+                                                                    └── Exec Update (CPO / Director PM)
 ```
 
 ```bash
@@ -67,6 +69,8 @@ python pdlc_orchestrator.py --goal "..." --from-stage design
 | [ui-designer](ui_designer.py) | Design spec, user flows, component inventory | — |
 | [codebase-reader](codebase_reader.py) | Walks a local directory and produces architecture maps, onboarding guides, or file explanations | full / architecture / onboarding / file |
 | [product-marketer](product_marketer.py) | Positioning, feature announcements, launch emails, blog posts, battlecards, social copy | positioning / announcement / email / blog / battlecard / social / all |
+| [ux-researcher](ux_researcher.py) | Research plans, discussion guides, synthesis reports, personas, journey maps, usability findings | plan / guide / synthesis / persona / journey / usability / all |
+| [data-scientist](data_scientist.py) | Measurement plans, analysis plans, experiment results interpretation, ML scoping, data storytelling | measurement / analysis / experiment-results / ml-scoping / storytelling / all |
 
 ---
 
