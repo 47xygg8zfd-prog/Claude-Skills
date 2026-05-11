@@ -45,6 +45,7 @@ ALL_STAGES = [
     "backend",
     "frontend",
     "qa",
+    "marketing",
     "exec-update",
 ]
 
@@ -59,6 +60,7 @@ STAGE_LABELS = {
     "backend": "Backend Engineer — Implementation Plan",
     "frontend": "Frontend Engineer — Implementation Plan",
     "qa": "QA Engineer — Test Plan",
+    "marketing": "Product Marketer — Launch Messaging",
     "exec-update": "CPO / Director PM — Stakeholder Update",
 }
 
@@ -370,6 +372,89 @@ Which TCs to automate, which framework, which are manual-only.
 Ship when: all P0 pass, all P1 pass or documented, no data-loss bugs.
 Block when: any P0 failure, any data loss, any security finding.""",
 
+    "marketing": """You are a senior product marketer preparing launch assets for a feature.
+
+Given the PRD, design spec, and strategic context, produce a launch marketing brief:
+
+# Launch Marketing Brief: [Feature]
+
+**Date**: [today]
+
+---
+
+## Positioning
+
+**One-sentence position**:
+[Feature] is the [what] that [target customer] use to [outcome], unlike [alternative] which [limitation].
+
+**Target customer**: [Specific role, company type, context]
+**Their pain today**: [What's broken or slow without this feature]
+**The transformation**: [Before → After — specific and measurable where possible]
+
+---
+
+## Messaging Hierarchy
+
+**Headline** (≤8 words):
+> [Lead with value — not the feature name]
+
+**Subheadline** (≤20 words):
+> [Who it's for and what they get]
+
+**Body** (2-3 sentences):
+[Plain language. Benefit-first. How it works, what's new.]
+
+**CTA**: [Specific verb — "Try it now" / "See it in action" / "Get started"]
+
+**Proof points**:
+- [Specific benefit — quantified if possible]
+- [Specific benefit]
+- [Specific benefit]
+
+---
+
+## Feature Announcement (in-app or email)
+
+[100-150 words. Hook → what it is → how to access it → CTA.
+Never start with "We're excited to announce." Never feature-dump.]
+
+---
+
+## Launch Email Subject Lines (3 options)
+
+1. [Benefit angle — ≤50 chars]
+2. [Pain angle — ≤50 chars]
+3. [Curiosity angle — ≤50 chars]
+
+---
+
+## Blog Post Title Options (3)
+
+1. [Outcome-focused]
+2. [Problem-focused]
+3. [How-to / tactical]
+
+---
+
+## Sales One-Liner
+
+"[What to say in a discovery call when this feature is relevant — ≤20 words]"
+
+---
+
+## What Not to Say
+
+- [Claim we can't substantiate]
+- [Jargon that customers don't use]
+- [Feature description that buries the benefit]
+
+---
+
+Rules:
+- Every headline must pass the "so what?" test — if a customer can ask "so what?" after reading it, rewrite it
+- Avoid: excited, thrilled, proud, game-changer, revolutionary, seamless, robust, best-in-class
+- Proof points must be specific — "saves time" is not a proof point; "reduces weekly review time from 2 hours to 15 minutes" is""",
+
     "exec-update": """You are a Director of PM writing an executive update on a feature launch.
 
 Given the full feature context (strategy through QA), produce a crisp exec update:
@@ -441,7 +526,8 @@ def build_input(stage: str, goal: str, outputs: dict[str, str]) -> str:
         "backend": ["prd", "architecture", "tech-lead"],
         "frontend": ["prd", "design", "architecture", "tech-lead"],
         "qa": ["prd", "backend", "frontend", "tech-lead"],
-        "exec-update": ["strategy", "prd", "experiment", "architecture"],
+        "marketing": ["strategy", "prd", "design"],
+        "exec-update": ["strategy", "prd", "experiment", "architecture", "marketing"],
     }
 
     prior = context_stages.get(stage, [])
