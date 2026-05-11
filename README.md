@@ -17,6 +17,7 @@ A complete toolkit for product managers using Claude — 15 skills, workflow gui
 | [`metrics/`](metrics/) | KPI definitions, benchmarks, and Snowflake SQL by product area |
 | [`ai-features/`](ai-features/) | Framework for scoping, evaluating, and shipping AI features |
 | [`case-study/`](case-study/) | End-to-end PM case study showing all skills used on one scenario |
+| [`thinking/`](thinking/) | PM principles, hard decisions, product teardown, and anti-patterns |
 | [`CLAUDE.md`](CLAUDE.md) | Fill-in-once context file that makes every skill smarter |
 
 ---
