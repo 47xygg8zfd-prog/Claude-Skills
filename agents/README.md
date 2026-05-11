@@ -64,6 +64,7 @@ python pdlc_orchestrator.py --goal "..." --from-stage design
 | Agent | What It Does | Key Modes |
 |-------|-------------|-----------|
 | [ui-designer](ui_designer.py) | Design spec, user flows, component inventory | — |
+| [codebase-reader](codebase_reader.py) | Walks a local directory and produces architecture maps, onboarding guides, or file explanations | full / architecture / onboarding / file |
 
 ---
 

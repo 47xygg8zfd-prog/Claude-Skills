@@ -26,6 +26,7 @@ A complete collection of Claude skills tailored for product management workflows
 | `north-star-metric` | Define and defend the single most important metric | "define our north star metric", "what should our north star be..." |
 | `product-strategy` | Strategy one-pagers, where to play, how to win | "write a product strategy", "strategic one-pager for", "where should we focus" |
 | `ui-designer` | Design specs, user flows, screen specs, component inventory, accessibility notes | "design this feature", "spec out the UX", "write design requirements for..." |
+| `codebase-reader` | Read, map, and explain any codebase — architecture, onboarding guide, file explanations | "read the codebase", "explain this repo", "I'm new to this project", "map the architecture" |
 
 ## How to Install
 
