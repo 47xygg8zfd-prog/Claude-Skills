@@ -15,6 +15,12 @@ A complete collection of Claude skills tailored for product management workflows
 | `quicksight-dashboards` | Design and build QuickSight dashboards | "build a dashboard for", "visualize this data", "KPI board for..." |
 | `pm-presentations` | PM slide deck templates (roadmap, exec, QBR) | "build me a deck", "slides for exec update", "roadmap presentation" |
 | `claude-automation` | Scope and build Claude skills & agents | "automate this with Claude", "build a skill for", "agent to..." |
+| `feature-prioritization` | RICE, ICE, MoSCoW, impact/effort matrices | "prioritize these features", "RICE score this", "what should we build first" |
+| `customer-research-synthesis` | Themes, JTBD, and opportunities from raw research | "synthesize these interview notes", "find themes in this research", "summarize user feedback" |
+| `okrs` | Draft, score, and check in on OKRs | "write OKRs for", "score my OKRs", "flag at-risk goals" |
+| `release-notes` | Audience-tailored release notes and changelogs | "write release notes", "draft a changelog", "summarize what shipped" |
+| `stakeholder-updates` | Status updates, escalations, DACI/RACI tables | "write a stakeholder update", "escalation memo", "write a DACI" |
+| `competitive-analysis` | Teardowns, feature matrices, battlecards, win/loss | "competitive analysis for", "battlecard for", "compare us to" |
 
 ## How to Install
 
@@ -38,6 +44,15 @@ PRD → Agile Stories → Sprint Planning (Agile Ceremonies)
                             ↓
               Tech Translation (engineering discussions)
               Claude Automation (building AI tools with eng)
+                            ↓
+              Customer Research Synthesis (validating direction)
+              Competitive Analysis (market positioning)
+                            ↓
+              Feature Prioritization (what to build next)
+              OKRs (goal setting and tracking)
+                            ↓
+              Release Notes (communicating what shipped)
+              Stakeholder Updates (keeping everyone aligned)
 ```
 
 ## Customization Tips
@@ -47,3 +62,8 @@ PRD → Agile Stories → Sprint Planning (Agile Ceremonies)
 - Add team-specific MCP server URLs to `claude-automation`
 - Adjust story pointing scale in `agile-stories`
 - Add company terminology to `tech-translation`
+- Add your ICP and differentiators to `competitive-analysis`
+- Add your team roster to `stakeholder-updates` for auto-suggested DACI owners
+- Add company OKRs to `feature-prioritization` to weight scores toward current goals
+- Add your user personas to `customer-research-synthesis` for segmented insights
+- Add your versioning scheme and brand voice to `release-notes`
