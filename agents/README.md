@@ -10,7 +10,7 @@ Run these for end-to-end workflows — they call each specialist in sequence, pa
 
 | Agent | What It Does |
 |-------|-------------|
-| [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 17 stages from strategy through UX research, analytics validation, data science, spec-driven dev, marketing, exec update, and retro |
+| [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 20 stages from strategy through continuous discovery (OST, devil's advocate, assumption testing), analytics validation, quality-gated build stages, and retro with next-discovery feedback loop |
 | [pm-agent](pm_agent.py) | **PM workflow** — discovery → PRD → stories → experiment → stakeholder update |
 | [eng-team](eng_team.py) | **Engineering team** — tech lead → backend → frontend → QA |
 
@@ -18,23 +18,30 @@ Run these for end-to-end workflows — they call each specialist in sequence, pa
 
 ```
 Strategy (CPO)
-    └── Discovery (PM)
-            └── UX Research
-                    └── PRD (PM)
-                            ├── Experiment Design (PM)
-                            │       └── Data Science (Measurement Plan)
-                            │               └── Analytics Expert (Metrics Validation + Event Spec)
-                            └── Design Spec (UI Designer)
-                                    └── Architecture (Technical Architect)
-                                            └── Spec (API contracts, schemas, acceptance specs)
-                                                    └── Tech Lead Review
-                                                            ├── Backend Plan
-                                                            ├── Frontend Plan
-                                                            └── QA Test Plan
-                                                                    └── Marketing (Product Marketer)
-                                                                            └── Exec Update (CPO / Director PM)
-                                                                                    └── Retro
+    └── Discovery (PM)  ←─────────────────────────────────────────────────────────┐
+            └── UX Research                                                        │
+                    └── Opportunity Solution Tree (OST)  ← continuous discovery   │
+                            └── PRD (PM)                                           │
+                                    └── Devil's Advocate Review                    │
+                                            └── Experiment Design                  │
+                                                    └── Assumption Test            │
+                                                            └── Data Science        │
+                                                                    └── Analytics   │
+                                                                            └── Design Spec
+                                                                                    └── Architecture
+                                                                                            └── Spec
+                                                                                                    └── Tech Lead
+                                                                                                            ├── Backend
+                                                                                                            ├── Frontend
+                                                                                                            └── QA
+                                                                                                                    └── Marketing
+                                                                                                                            └── Exec Update
+                                                                                                                                    └── Retro → Next Discovery Questions ──┘
 ```
+
+**Quality gates** (auto-retry up to 2×): `ux-research`, `opportunity-solution-tree`, `prd`, `experiment`, `analytics`, `spec`
+
+**Post-run**: cross-stage continuity check + assumption register printed after every full run
 
 ```bash
 # Run full PDLC for a feature
@@ -49,8 +56,14 @@ python pdlc_orchestrator.py --goal "..." --from-stage design
 # Revise a stage and re-run all downstream stages
 python pdlc_orchestrator.py --goal "..." --output-dir ./digest/ --revise-stage prd --revise-note "strengthen must-have rationale"
 
-# Enable confidence scoring for each stage
+# Enable confidence scoring for each stage (warns if score < 3/5)
 python pdlc_orchestrator.py --goal "..." --score
+
+# Skip quality gates (faster, no auto-retry)
+python pdlc_orchestrator.py --goal "..." --no-gate
+
+# Continuous discovery mode — append discovery to running log, inject prior findings as context
+python pdlc_orchestrator.py --goal "..." --output-dir ./digest/ --stages discovery --snapshot
 ```
 
 ---
