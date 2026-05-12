@@ -15,6 +15,22 @@ Design statistically valid experiments, calculate required sample sizes, define 
 
 ## Behavior
 
+### Step 0: Validate the experiment type (always run this first)
+
+Before designing an A/B test, ask: **is a controlled experiment actually the right approach?**
+
+| Situation | Right method | Why not A/B |
+|-----------|-------------|------------|
+| Testing whether the problem exists | Fake door / smoke test | No product to A/B yet |
+| Testing willingness to pay | Fake door or pricing page variant | Need real payment signal, not usage |
+| Need an answer in < 1 week | Pre/post or manual test | A/B needs minimum 2 weeks |
+| Can't split traffic (single-player) | Pre/post or cohort comparison | No treatment/control possible |
+| New feature with no baseline | Concierge test or dogfood first | Can't define MDE without baseline |
+| Enough traffic for a valid test | A/B test | Standard case |
+
+Only proceed to A/B design if a controlled experiment is the right call. If not, route to
+the appropriate method and explain why.
+
 ### Mode 1: Design an Experiment
 
 When triggered, ask for:

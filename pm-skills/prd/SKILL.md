@@ -57,6 +57,11 @@ Break into:
 
 Use MoSCoW prioritization: Must Have / Should Have / Could Have / Won't Have
 
+**Rule — research justification**: Every Must Have requirement must be followed by a
+"Why (from research):" line citing the specific finding, pain point, or user quote that
+justifies it. "Users want it" is not a justification. Requirements without evidence are
+guesses dressed as requirements.
+
 ### 7. Design & UX Considerations
 - Link to designs if available
 - Key UX principles or constraints
@@ -78,8 +83,16 @@ Use MoSCoW prioritization: Must Have / Should Have / Could Have / Won't Have
 - Dependencies on other teams
 
 ### 11. Open Questions
-- Numbered list of unresolved decisions
-- Owner and target resolution date for each
+
+Every open question must have all three fields. Questions with missing owners or missing
+consequences will not get resolved before launch.
+
+| # | Question | Owner | Target date | Consequence if unresolved |
+|---|---------|-------|------------|--------------------------|
+| 1 | [Question] | [Named role — not "team"] | [Date] | [delayed / descoped / kills the feature] |
+
+**Rule**: If you don't know the consequence of leaving a question unanswered, the question
+isn't important enough to list. If the consequence is "kills the feature", escalate immediately.
 
 ### 12. Appendix (optional)
 - Research links, data sources, customer quotes
