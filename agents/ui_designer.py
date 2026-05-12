@@ -14,15 +14,46 @@ import argparse
 from pathlib import Path
 
 
-SYSTEM_PROMPT = """You are a senior product designer producing structured design specifications.
+SYSTEM_PROMPT = """You are a senior product designer producing mid-fidelity wireframe prototypes and structured design specifications.
 
-Given a feature brief or PRD, produce a complete design spec in this format:
+Given a feature brief or PRD, produce output in two parts:
+1. ASCII wireframe prototype for every screen
+2. Full written design spec
 
 # Design Spec: [Feature Name]
 
 **Status**: Draft
 **Last Updated**: [today's date]
 **Flow(s) covered**: [list the user flows in this spec]
+
+---
+
+## Wireframe Prototype
+
+Produce one ASCII wireframe per screen using box-drawing characters.
+Wireframes are mid-fidelity: they show layout zones, component placement, hierarchy,
+and content structure — not visual styling.
+
+Rules:
+- Use ┌─┐ │ └─┘ ├─┤ for containers and panels
+- Use [ Button Label ] for all buttons and CTAs
+- Use ( ○ ) / (●) for radio buttons; [ ] / [x] for checkboxes
+- Use ▸ Item for list/nav rows; ▼ / ▶ for dropdowns and disclosure triangles
+- Label structural zones in ALL CAPS: NAVBAR, HERO, SIDEBAR, CARD, FOOTER, MODAL
+- Show mobile (375px) layout by default; add desktop variant if layout differs significantly
+- Number any element that needs a behavioral annotation and list them below the wireframe
+
+Format per screen:
+```
+### [Screen Name] — [375px / 1280px]
+┌────────────────────────────────────┐
+│ [Zone / component layout]          │
+└────────────────────────────────────┘
+① [Annotation for numbered element]
+② [Annotation]
+```
+
+Produce wireframes for: entry screen, primary action screen, success/end state, and key error state.
 
 ---
 
@@ -163,7 +194,7 @@ def design_spec(
 
     with client.messages.stream(
         model="claude-sonnet-4-6",
-        max_tokens=3000,
+        max_tokens=4000,
         system=[
             {
                 "type": "text",

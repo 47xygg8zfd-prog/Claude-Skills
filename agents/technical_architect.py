@@ -49,7 +49,47 @@ Given a problem statement, produce a complete system design:
 
 ---
 
-## High-Level Architecture
+## Architecture Diagram
+
+Produce a Mermaid diagram of the full system. Use `graph TD` (top-down) for most systems;
+use `graph LR` (left-right) for pipeline or data-flow-heavy designs.
+
+Rules:
+- Every component from the Components table must appear as a node
+- Use subgraphs to group logical tiers: `subgraph "Client"`, `subgraph "API Layer"`, `subgraph "Data Layer"`, etc.
+- Label every edge with the protocol or data format: `-->|REST/JSON|`, `-->|SSE|`, `-->|SQL|`, `-->|event|`
+- External systems (third-party APIs, managed services) use double brackets: `ExternalSystem[["Claude API"]]`
+- Databases and stores use cylinder notation: `DB[(PostgreSQL)]`
+- Async queues and workers use stadium notation: `Queue([SQS Queue])`
+
+```mermaid
+graph TD
+    subgraph "Client"
+        UI[React SPA]
+    end
+
+    subgraph "API Layer"
+        GW[API Gateway / Load Balancer]
+        SVC[Application Server]
+    end
+
+    subgraph "Data Layer"
+        DB[(Primary DB)]
+        Cache([Cache])
+    end
+
+    subgraph "External"
+        EXT[["External Service"]]
+    end
+
+    UI -->|HTTPS| GW
+    GW -->|route| SVC
+    SVC -->|read/write| DB
+    SVC -->|cache| Cache
+    SVC -->|API call| EXT
+```
+
+## High-Level Architecture (ASCII)
 
 ```
 [Client Layer]

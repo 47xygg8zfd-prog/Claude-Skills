@@ -1,13 +1,15 @@
 ---
 name: ui-designer
 description: >
-  Generate UI/UX design specifications, user flows, component descriptions, wireframe narratives,
-  and interaction states from a PRD, feature brief, or rough idea. Use this skill when the user
-  asks for design specs, wants to think through a user flow, needs component definitions, or
-  wants to produce a design brief for a designer or design system. Also trigger when the user
-  says things like "help me design this", "what should this screen look like", "spec out the UX",
-  or "write up the design requirements". Does not produce image files — produces structured design
-  documentation that can drive Figma work or design system decisions.
+  Generate UI/UX design specifications, mid-fidelity ASCII wireframe prototypes, user flows,
+  component descriptions, and interaction states from a PRD, feature brief, or rough idea.
+  Use this skill when the user asks for design specs, wireframes, wants to think through a
+  user flow, needs component definitions, or wants to produce a design brief for a designer
+  or design system. Also trigger when the user says things like "help me design this",
+  "wireframe this screen", "what should this screen look like", "sketch out the UI",
+  "spec out the UX", or "write up the design requirements". Produces structured design
+  documentation and ASCII wireframe prototypes that can drive Figma work or design system
+  decisions — no image files needed.
 ---
 
 # UI Designer Skill
@@ -24,6 +26,47 @@ Generate structured design specifications, user flows, and component documentati
 ## Output Structure
 
 ### For a full design spec, produce:
+
+**0. Mid-Fidelity Wireframe Prototype**
+For each screen in the flow, produce an ASCII wireframe using box-drawing characters.
+Wireframes communicate layout zones, component placement, hierarchy, and relative sizing.
+They are mid-fidelity: more structured than a sketch, less detailed than a high-fidelity mockup.
+
+Format rules:
+- Use `┌─┐ │ └─┘ ├─┤` for containers and panels
+- Use `[ Button Label ]` for buttons and CTAs
+- Use `( ○ )` / `(●)` for radio buttons, `[ ]` / `[x]` for checkboxes
+- Use `▸ Item` for list rows, `▼ / ▶` for dropdowns/disclosure
+- Annotate zones with ALL CAPS labels: `NAVBAR`, `HERO`, `SIDEBAR`, `CARD`, `MODAL`
+- Add a numbered annotation key below each wireframe for anything needing explanation
+
+Example format:
+```
+Screen: [Name] — [375px mobile / 1280px desktop]
+┌────────────────────────────────────┐
+│ NAVBAR                   [≡ Menu] │
+├────────────────────────────────────┤
+│                                    │
+│  Headline text ①                  │
+│  Subheadline copy here             │
+│                                    │
+│  ┌──────────────────────────────┐  │
+│  │ INPUT AREA                   │  │
+│  │ Placeholder text…            │  │
+│  │                              │  │
+│  └──────────────────────────────┘  │
+│  [ Primary CTA        ] ②         │
+│                                    │
+│  RECENT ITEMS                      │
+│  ┌──────────────────────────────┐  │
+│  │ ▸ Item title                 │  │
+│  ├──────────────────────────────┤  │
+│  │ ▸ Item title                 │  │
+│  └──────────────────────────────┘  │
+└────────────────────────────────────┘
+① Streams in after submit — show loading skeleton first
+② Disabled until input ≥ 10 chars
+```
 
 **1. Design Brief**
 - Feature summary (1 paragraph)
