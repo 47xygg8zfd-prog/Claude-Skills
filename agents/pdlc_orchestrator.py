@@ -23,6 +23,7 @@ PDLC Stages:
   13. qa           → QA Engineer writes the test plan
   14. marketing    → Product Marketer prepares launch messaging
   15. exec-update  → CPO / Director PM produces the stakeholder update
+  16. retro        → PM / Tech Lead retrospective and next iteration plan
 
 Usage:
     python pdlc_orchestrator.py --goal "add a weekly email digest for engineering managers"
@@ -45,6 +46,7 @@ ALL_STAGES = [
     "prd",
     "experiment",
     "data-science",
+    "analytics",
     "design",
     "architecture",
     "spec",
@@ -54,6 +56,7 @@ ALL_STAGES = [
     "qa",
     "marketing",
     "exec-update",
+    "retro",
 ]
 
 STAGE_LABELS = {
@@ -63,6 +66,7 @@ STAGE_LABELS = {
     "prd": "PM — Product Requirements",
     "experiment": "PM — Experiment Design",
     "data-science": "Data Scientist — Measurement Plan",
+    "analytics": "Analytics Expert — Instrumentation Validation",
     "design": "UI Designer — Design Spec",
     "architecture": "Technical Architect — System Design",
     "spec": "Spec-Driven Dev — API Contracts & Acceptance Specs",
@@ -72,6 +76,7 @@ STAGE_LABELS = {
     "qa": "QA Engineer — Test Plan",
     "marketing": "Product Marketer — Launch Messaging",
     "exec-update": "CPO / Director PM — Stakeholder Update",
+    "retro": "PM / Tech Lead — Sprint Retrospective & Next Iteration",
 }
 
 SYSTEM_PROMPTS = {
@@ -168,7 +173,16 @@ Given a discovery brief and strategic context, produce a focused research synthe
 
     "prd": """You are a senior PM writing a product requirements document.
 
-Given discovery findings and strategic context, produce a focused PRD:
+Given discovery findings, UX research, and strategic context, produce a focused PRD.
+
+CRITICAL RULE — Research justification: Every Must Have requirement must be followed
+immediately by a "Why (from research):" line citing the specific finding, pain point,
+or user quote that justifies it. Requirements without research backing are opinions.
+
+CRITICAL RULE — Open question ownership: Every open question must have three fields:
+Owner (named role), Target date, and Consequence if unresolved (what happens to the
+feature if this question isn't answered — "delayed", "descoped", "kills the feature").
+Unowned questions don't get answered.
 
 # PRD: [Feature]
 **Status**: Draft | **Date**: [today]
@@ -190,14 +204,24 @@ Given discovery findings and strategic context, produce a focused PRD:
 3. As a **[user]**, I want **[action]**, so that **[outcome]**.
 
 ## Requirements (MoSCoW)
-**Must have**: [list]
-**Should have**: [list]
-**Could have**: [list]
-**Won't have**: [list]
+
+**Must have**:
+- [Requirement]
+  Why (from research): [Specific finding, pain point, or quote that justifies this — not "users want it"]
+
+**Should have**:
+- [Requirement — no research citation required, but explain the value]
+
+**Could have**:
+- [Requirement]
+
+**Won't have**:
+- [What v1 explicitly excludes — and why deferring is the right call]
 
 ## Open Questions
-1. [Blocker before engineering starts — owner — target date]
-2. [Blocker]""",
+| # | Question | Owner | Target date | Consequence if unresolved |
+|---|---------|-------|------------|--------------------------|
+| 1 | [Blocker] | [Role] | [Date] | [delayed / descoped / kills the feature] |""",
 
     "experiment": """You are a senior PM designing a product experiment.
 
@@ -228,47 +252,122 @@ Given a PRD, produce a focused experiment design:
 - **Iterate**: directionally positive, below MDE
 - **Kill**: flat/negative p < 0.05, OR guardrail breached""",
 
-    "data-science": """You are a senior data scientist defining how a feature will be measured.
-
-Given a PRD and experiment design, produce a measurement plan:
+    "data-science": """You are a senior data scientist. The PM has already defined the hypothesis and
+success metrics in the PRD and experiment design. Your job is NOT to redefine those —
+it is to translate them into a precise instrumentation plan and SQL that can actually
+measure them. Focus exclusively on: what events to fire, what properties to capture,
+and how to query the data. If the PRD's metrics are vague or unmeasurable, flag it.
 
 # Data Science Brief: [Feature]
 
-## North Star Metric
-**Metric**: [Name]
-**Definition**: [Exact calculation — who, what action, over what window]
-**Baseline**: [Current value or "requires instrumentation before launch"]
-**Target**: [Goal and timeframe]
+## Instrumentation Plan
 
-## Metric Hierarchy
-| Level | Metric | Definition | Why it matters |
-|-------|--------|-----------|---------------|
-| Primary | [metric] | [exact calc] | [ties to user value] |
-| Leading indicator | [metric] | [exact calc] | [predicts primary] |
-| Guardrail | [metric] | [exact calc] | [must not degrade] |
+For every metric defined in the PRD/experiment, specify the events needed to measure it.
+Do not invent new metrics — trace each event back to a metric that was already defined.
 
-## Instrumentation Needed
-| Event | Trigger | Key properties |
-|-------|---------|---------------|
-| `[event_name]` | [when it fires] | `{ user_id, [prop] }` |
+| Event name | Fires when | Required properties | Measures |
+|------------|-----------|-------------------|---------|
+| `event_name` | [specific trigger] | `user_id`, `[prop: type]` | [which metric from PRD] |
 
-## Experiment Readiness
-- Baseline stable? [Yes / Needs 2 weeks of clean data first]
-- MDE at current traffic: [X% lift detectable in Y weeks at 50/50 split]
-- Recommended test duration: [N weeks minimum]
+Flag any metric from the PRD that has no clear event mapping: "UNMEASURABLE: [metric] — [why and what's needed to fix it]"
 
-## Key SQL
+## Measurement SQL
+
+For each primary metric and leading indicator, write the exact SQL query.
+Use realistic table/column names based on the architecture and data model.
+Add a comment explaining what each query measures and its limitations.
+
 ```sql
--- Primary metric
-SELECT DATE_TRUNC('week', event_time) AS week,
-       COUNT(DISTINCT user_id) AS [metric]
-FROM events
-WHERE event_type = '[event]'
-GROUP BY 1 ORDER BY 1
+-- [Metric name] — [what this measures]
+-- Limitation: [any caveat — e.g., counts sessions not unique users, UTC timezone]
+SELECT ...
+FROM ...
+WHERE ...
+GROUP BY ...
+ORDER BY ...
 ```
 
+## Experiment Readiness
+
+- **Baseline stable?** [Yes — N weeks of clean data / No — needs instrumentation first]
+- **MDE detectable at current traffic**: [X% lift in Y weeks at 50/50 split]
+- **Minimum recommended duration**: [N weeks — reason]
+- **Confounds to control for**: [any factors that could distort the measurement]
+
 ## Data Risks
-- [Risk to measurement validity — instrumentation gap, selection bias, etc.]""",
+
+| Risk | Impact | Mitigation |
+|------|--------|-----------|
+| [e.g., Event missing on mobile] | [Primary metric undercounted] | [Verify SDK fires on iOS and Android before launch] |""",
+
+    "analytics": """You are a senior analytics engineer. The data scientist has defined what to
+measure. Your job is to validate that every metric is actually measurable and produce the
+event spec and SQL before engineers build anything. Do not redefine metrics — validate them.
+
+# Instrumentation Validation: [Feature]
+
+**Date**: [today]
+**Status**: [All metrics measurable ✅ / Blocked — see flags ❌]
+
+---
+
+## Metrics Validation
+
+For each metric from the measurement plan, run the four-check protocol:
+1. Event exists (or will be created)?
+2. Event carries the required properties?
+3. Event fires on all relevant platforms?
+4. Deduplication key defined if event could double-fire?
+
+| Metric | Source event | Properties required | Platforms | Dedup key | Status |
+|--------|-------------|-------------------|---------|---------|--------|
+| [metric] | `event_name` | `user_id: uuid`, `[prop]: type` | Web/iOS/Android | `(user_id, [key])` | ✅ / ⚠️ / ❌ |
+
+---
+
+## Instrumentation Flags
+
+```
+❌ UNMEASURABLE: [metric]
+   Root cause: [missing event / missing property / platform gap]
+   Fix: [specific action — must be resolved before sprint start]
+```
+
+---
+
+## Event Spec (new/modified events)
+
+For each event that must be added or changed:
+
+**`event_name`** — fires when [trigger]
+Properties: `user_id: uuid` (required), `[prop]: type` (required/optional)
+Platforms: [Web / iOS / Android / all]
+Dedup: by `([key fields])` — or "no dedup needed"
+Test: verify in [event stream tool] before launch
+
+---
+
+## Key SQL
+
+For each primary metric, provide the query:
+
+```sql
+-- [Metric] — [what it measures, who is included]
+SELECT DATE_TRUNC('week', event_time) AS week,
+       COUNT(DISTINCT user_id)        AS metric_value
+FROM events
+WHERE event_type = 'event_name'
+GROUP BY 1 ORDER BY 1;
+```
+
+---
+
+## Pre-Launch Checklist
+
+- [ ] All ❌ flags resolved before sprint kickoff
+- [ ] New events added to spec and assigned to a team member
+- [ ] Test events verified in staging event stream
+- [ ] Baseline captured before feature flags enabled""",
 
     "design": """You are a senior product designer producing a design spec.
 
@@ -425,13 +524,20 @@ Feature: [Feature Name]
 | [decision] | [option A / option B] | [team] | [date] |""",
 
     "tech-lead": """You are a staff tech lead reviewing an architecture and planning the engineering breakdown.
+You are NOT a yes-person. You push back on architectural choices when you disagree.
 
-Given architecture and PRD context, produce a tech lead brief:
+Given architecture, spec, and PRD context, produce a tech lead brief:
 
 # Tech Lead Brief: [Feature]
 
 ## My Assessment
 [3-4 sentences: complexity read, biggest risk, what's being underestimated]
+
+## What I'd Change About This Architecture
+[This section is mandatory. Identify 2-3 specific architectural decisions you'd push back on or
+do differently. For each: state the decision, your concern, and your preferred alternative.
+If you genuinely agree with all decisions, explain why — don't skip the section.
+Format each as: "**[Decision]**: [Concern] → [What I'd do instead and why]"]
 
 ## Approach
 [5-7 bullets on implementation strategy — specific enough to start without a follow-up meeting]
@@ -508,35 +614,46 @@ Integration: complete user flow from entry to end state.
 ## Implementation Order
 1. Static component → 2. Hook + API → 3. Error/loading states → 4. A11y → 5. Tests""",
 
-    "qa": """You are a senior QA engineer given implementation plans and a PRD.
-
-Produce a focused test plan:
+    "qa": """You are a senior QA engineer. You have been given acceptance specs in Given/When/Then
+format from the spec stage. Do NOT re-derive scenarios from the PRD — those scenarios already
+exist. Your job is to take the Given/When/Then scenarios and add: priority ratings, preconditions,
+test data requirements, automation decisions, and execution notes. Then add edge cases and
+regression checks that the spec stage didn't cover.
 
 # QA Test Plan: [Feature]
 
-## AC Coverage
-| AC | Test Cases |
-|----|-----------|
-| [criterion] | [TC-01, TC-02] |
+## Acceptance Spec Coverage
 
-## P0 Test Cases (blocking)
-For each: scenario, precondition, steps, expected result, data needed.
+For each Given/When/Then scenario from the spec, add QA execution details:
 
-## P1 Test Cases (high priority)
-Edge cases, boundary conditions, error handling, concurrent operations.
+| Scenario | Priority | Precondition | Test data needed | Automate? | Framework |
+|---------|---------|-------------|-----------------|-----------|---------|
+| [scenario title from spec] | P0/P1/P2 | [system state] | [specific data] | Yes/No | [Pytest/Playwright/Jest/Manual] |
+
+## P0 Additions (blocking — not in spec)
+
+Scenarios the spec stage missed that must pass before ship:
+- [Edge case, security check, or integration scenario not in Given/When/Then]
+
+## P1 Additions (high priority — not in spec)
+
+- [Boundary conditions, concurrent operations, or error paths not covered]
 
 ## Regression Checks
-Adjacent features that must be verified after this change.
+
+Adjacent features that must be verified after this change — with specific test focus:
+- [Feature]: [what to verify — not just "check it works"]
 
 ## Accessibility
-Keyboard navigation, screen reader, color contrast checks.
 
-## Automation
-Which TCs to automate, which framework, which are manual-only.
+- Keyboard navigation: [specific tab order and focus checks for this feature]
+- Screen reader: [which live regions and ARIA labels to verify]
+- Color contrast: [any new UI elements to check]
 
 ## Go/No-Go
-Ship when: all P0 pass, all P1 pass or documented, no data-loss bugs.
-Block when: any P0 failure, any data loss, any security finding.""",
+
+Ship when: all P0 scenarios pass (spec + additions), all P1 pass or documented with workaround.
+Block when: any P0 failure, any data loss bug, any security finding, or spec scenario with no test result.""",
 
     "marketing": """You are a senior product marketer preparing launch assets for a feature.
 
@@ -653,7 +770,119 @@ Given the full feature context (strategy through QA), produce a crisp exec updat
 
 ## Ask
 [Specific ask from exec team — awareness / decision / resource / intro]""",
+
+    "retro": """You are a PM and tech lead running a post-launch retrospective.
+
+Given the full PDLC context (strategy through exec update), produce a retrospective that
+closes the loop — what was wrong, what to do differently, and what the next iteration is.
+This is not a feel-good summary. Be direct about what failed and why.
+
+# Retrospective: [Feature] — [Date]
+
+## What We Got Wrong
+
+For each assumption in the original strategy or PRD that turned out to be incorrect or
+partially wrong, state: what we assumed, what actually happened, and why we were wrong.
+
+| Assumption | What we assumed | What actually happened | Root cause of the miss |
+|-----------|----------------|----------------------|----------------------|
+| [assumption] | [belief at start] | [reality] | [why we were wrong — bad data / wrong user / overconfidence] |
+
+## What Slowed Us Down
+
+Technical, process, or communication friction that added time or rework:
+- **[Issue]**: [What happened, estimated time lost, how to prevent next time]
+
+## What We'd Do Differently
+
+If we were starting this feature over today, what would change?
+Be specific — not "better communication" but "run the spec stage before architecture, not after."
+
+1. [Specific change — process, sequence, or decision]
+2. [Specific change]
+3. [Specific change]
+
+## What Actually Worked
+
+What should we keep doing — and why it worked here specifically:
+- [Practice]: [Why it helped on this feature — don't generalize]
+
+## Open Questions That Were Never Resolved
+
+From the PRD open questions table: which ones were marked "kills the feature" but went unanswered?
+Which ones were deferred and still haven't been answered post-launch?
+
+| Question | Original consequence | What happened | Still open? |
+|---------|---------------------|--------------|------------|
+| [question] | [kills / delays / descopes] | [resolved / deferred / ignored] | Yes/No |
+
+## Next Iteration Recommendation
+
+Based on what we now know, what should v2 address?
+- **Highest-confidence addition**: [what users actually asked for vs. what we guessed]
+- **Biggest gap to close**: [what v1 is missing that's hurting retention or conversion]
+- **What to cut or simplify**: [what we built that's not being used or is causing friction]
+
+## Metrics Check-In
+
+For each success metric from the PRD, report current status:
+
+| Metric | Target | Current | On track? | Action needed |
+|--------|--------|---------|----------|--------------|
+| [metric] | [target] | [actual or "data pending"] | Yes/No/TBD | [what to do if off track] |""",
 }
+
+
+SUMMARIZER_PROMPT = """Summarize the following PDLC stage output in 150 words or fewer.
+Preserve: key decisions made, primary outputs (metrics, endpoints, requirements, etc.),
+and any open questions or risks flagged. Omit narrative, headers, and formatting.
+Write as dense, specific prose — no bullets. Every sentence must carry new information."""
+
+SCORER_PROMPT = """You are a PDLC quality reviewer. Score the following stage output on
+three dimensions, each 1–5 (5 = excellent):
+
+1. Completeness — are all required sections present and non-empty?
+2. Specificity — are claims concrete (numbers, names, dates) or vague (TBD, generic)?
+3. Decision-readiness — could the next stage start work with only this document?
+
+Respond in this exact format:
+COMPLETENESS: [1-5] — [one sentence on what's missing or why it's complete]
+SPECIFICITY: [1-5] — [one example of a vague claim, or confirmation that claims are specific]
+DECISION_READINESS: [1-5] — [one specific blocker, or confirmation the next stage can proceed]
+OVERALL: [1-5]
+FLAGS: [Comma-separated list of specific issues, or "none"]"""
+
+
+def summarize_output(text: str) -> str:
+    """Compress a stage output to ~150 words for use as context in later stages."""
+    result = client.messages.create(
+        model=MODEL,
+        max_tokens=300,
+        messages=[{"role": "user", "content": f"{SUMMARIZER_PROMPT}\n\n{text}"}],
+    )
+    return result.content[0].text
+
+
+def score_stage(stage: str, input_text: str, output_text: str) -> None:
+    """Print a quality score for a stage output. Does not affect the pipeline."""
+    label = STAGE_LABELS[stage]
+    print(f"\n  ┌── QUALITY SCORE: {label}")
+    result = client.messages.create(
+        model=MODEL,
+        max_tokens=300,
+        messages=[{
+            "role": "user",
+            "content": f"{SCORER_PROMPT}\n\nStage: {label}\n\nOutput:\n{output_text[:3000]}",
+        }],
+    )
+    for line in result.content[0].text.strip().splitlines():
+        print(f"  │  {line}")
+    print("  └──")
+
+
+# Stages whose outputs should be summarized when passed as context to later stages.
+# Full outputs are still saved to disk; only the summary is passed forward.
+SUMMARIZE_WHEN_DOWNSTREAM = {"strategy", "discovery", "ux-research", "experiment", "design"}
 
 
 def run_stage(stage: str, content: str) -> str:
@@ -679,7 +908,12 @@ def run_stage(stage: str, content: str) -> str:
     return "".join(result)
 
 
-def build_input(stage: str, goal: str, outputs: dict[str, str]) -> str:
+def build_input(
+    stage: str,
+    goal: str,
+    outputs: dict[str, str],
+    summaries: dict[str, str],
+) -> str:
     base = f"Feature goal:\n{goal}"
 
     context_stages = {
@@ -688,6 +922,7 @@ def build_input(stage: str, goal: str, outputs: dict[str, str]) -> str:
         "prd": ["strategy", "discovery", "ux-research"],
         "experiment": ["prd"],
         "data-science": ["prd", "experiment"],
+        "analytics": ["prd", "data-science"],
         "design": ["prd", "ux-research"],
         "architecture": ["prd", "design"],
         "spec": ["prd", "architecture"],
@@ -697,13 +932,20 @@ def build_input(stage: str, goal: str, outputs: dict[str, str]) -> str:
         "qa": ["prd", "spec", "backend", "frontend", "tech-lead"],
         "marketing": ["strategy", "prd", "design"],
         "exec-update": ["strategy", "prd", "experiment", "data-science", "architecture", "marketing"],
+        "retro": ["strategy", "prd", "exec-update"],
     }
 
     prior = context_stages.get(stage, [])
     sections = [base]
     for p in prior:
-        if p in outputs:
-            sections.append(f"\n[{STAGE_LABELS[p].upper()}]\n{outputs[p]}")
+        if p not in outputs:
+            continue
+        # Use summary for early stages when passed as context to late stages,
+        # to keep prompt size manageable and focus each stage on relevant inputs.
+        use_summary = p in SUMMARIZE_WHEN_DOWNSTREAM and p in summaries
+        text = summaries[p] if use_summary else outputs[p]
+        label = f"{STAGE_LABELS[p].upper()}{'  [summary]' if use_summary else ''}"
+        sections.append(f"\n[{label}]\n{text}")
 
     return "\n\n".join(sections)
 
@@ -712,19 +954,37 @@ def run_pdlc(
     goal: str,
     stages: list[str],
     output_dir: str | None = None,
-) -> None:
-    outputs: dict[str, str] = {}
+    score: bool = False,
+    prior_outputs: dict[str, str] | None = None,
+) -> dict[str, str]:
+    outputs: dict[str, str] = dict(prior_outputs or {})
+    summaries: dict[str, str] = {}
+
+    # Pre-build summaries for any outputs loaded from a prior run
+    for stage, text in outputs.items():
+        if stage in SUMMARIZE_WHEN_DOWNSTREAM:
+            summaries[stage] = summarize_output(text)
 
     print(f"\n{'═' * 64}")
     print(f"  PDLC/SDLC ORCHESTRATOR")
     print(f"  Goal: {goal[:60]}{'...' if len(goal) > 60 else ''}")
     print(f"  Stages: {' → '.join(stages)}")
+    if score:
+        print("  Quality scoring: ON")
     print(f"{'═' * 64}")
 
     for stage in stages:
-        content = build_input(stage, goal, outputs)
+        content = build_input(stage, goal, outputs, summaries)
         result = run_stage(stage, content)
         outputs[stage] = result
+
+        # Build a compressed summary for stages that will be used as upstream
+        # context in many later stages — keeps prompt size bounded on long runs.
+        if stage in SUMMARIZE_WHEN_DOWNSTREAM:
+            summaries[stage] = summarize_output(result)
+
+        if score:
+            score_stage(stage, content, result)
 
         if output_dir:
             out_path = Path(output_dir)
@@ -738,13 +998,26 @@ def run_pdlc(
     if output_dir:
         print(f"  All outputs saved to: {output_dir}/")
     print(f"{'═' * 64}\n")
+    return outputs
+
+
+def load_outputs_from_dir(output_dir: str) -> dict[str, str]:
+    """Load previously saved stage outputs from an output directory."""
+    out_path = Path(output_dir)
+    outputs: dict[str, str] = {}
+    for stage in ALL_STAGES:
+        filename = f"{ALL_STAGES.index(stage) + 1:02d}_{stage.replace('-', '_')}.md"
+        path = out_path / filename
+        if path.exists():
+            outputs[stage] = path.read_text()
+    return outputs
 
 
 def main():
     parser = argparse.ArgumentParser(
         description=(
             "PDLC/SDLC orchestrator — runs the full product and engineering lifecycle "
-            "from strategic framing through QA and stakeholder update"
+            "from strategic framing through retrospective"
         )
     )
     group = parser.add_mutually_exclusive_group(required=True)
@@ -766,9 +1039,43 @@ def main():
         "--output-dir",
         help="Directory to save each stage output as a numbered markdown file",
     )
+    parser.add_argument(
+        "--revise-stage",
+        choices=ALL_STAGES,
+        help=(
+            "Re-run a specific stage with a revision note, then re-run all downstream stages. "
+            "Requires --output-dir to load prior stage outputs."
+        ),
+    )
+    parser.add_argument(
+        "--revise-note",
+        help="Additional context or constraint to inject when re-running the revised stage",
+        default="",
+    )
+    parser.add_argument(
+        "--score",
+        action="store_true",
+        help="Print a quality score (completeness, specificity, decision-readiness) after each stage",
+    )
     args = parser.parse_args()
 
     goal = args.goal if args.goal else Path(args.file).read_text()
+
+    if args.revise_stage:
+        if not args.output_dir:
+            print("--revise-stage requires --output-dir to load prior stage outputs.")
+            raise SystemExit(1)
+        prior_outputs = load_outputs_from_dir(args.output_dir)
+        if args.revise_note:
+            goal = f"{goal}\n\n[REVISION NOTE]: {args.revise_note}"
+        # Re-run from the revised stage through the end of the pipeline
+        start_idx = ALL_STAGES.index(args.revise_stage)
+        stages = ALL_STAGES[start_idx:]
+        print(f"\n  REVISING from stage: {args.revise_stage}")
+        if args.revise_note:
+            print(f"  Revision note: {args.revise_note}")
+        run_pdlc(goal, stages=stages, output_dir=args.output_dir, score=args.score, prior_outputs=prior_outputs)
+        return
 
     if args.stages:
         requested = [s.strip() for s in args.stages.split(",")]
@@ -783,7 +1090,7 @@ def main():
     else:
         stages = ALL_STAGES
 
-    run_pdlc(goal, stages=stages, output_dir=args.output_dir)
+    run_pdlc(goal, stages=stages, output_dir=args.output_dir, score=args.score)
 
 
 if __name__ == "__main__":

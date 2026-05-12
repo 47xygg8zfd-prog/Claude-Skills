@@ -84,11 +84,30 @@ One-page format for sales/CS use:
 - **Proof points**: Customer quotes or data that support our position
 - **When we lose**: Honest situations where they're a better fit (builds credibility)
 
+### Mode 6: So What (always the final section)
+
+Every competitive analysis output — regardless of mode — must end with a "So What"
+section. A competitive analysis that doesn't change a decision isn't worth producing.
+
+**So What: [N] Actions**
+
+| Priority | Action | Rationale | Owner | Timeframe |
+|---------|--------|-----------|-------|---------|
+| 1 | [Specific product / pricing / positioning change] | [Which finding drives this] | [PM / Sales / Marketing] | [This quarter / Next quarter / Backlog] |
+
+Rules:
+- Minimum 2 actions, maximum 5
+- Each action must be specific enough to put on a roadmap or OKR
+- "Monitor the situation" is not an action
+- If the analysis produced no actionable findings, say so explicitly: the research was
+  inconclusive and here's what additional data would change that
+
 ## Output Style
 - Evidence-based: attribute claims to sources when provided
 - Flag low-confidence claims (inferred vs. confirmed)
 - Battlecards: punchy and scannable — sales reps read these in 30 seconds before a call
 - Teardowns: thorough and structured for PM/strategy audiences
+- Every output ends with "So What" — the analysis is only complete when it drives a decision
 
 ## Customization Tips
 - Add your ICP (ideal customer profile) so comparisons stay relevant to your segment

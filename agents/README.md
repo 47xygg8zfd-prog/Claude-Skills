@@ -10,7 +10,7 @@ Run these for end-to-end workflows — they call each specialist in sequence, pa
 
 | Agent | What It Does |
 |-------|-------------|
-| [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 15 stages from strategy through UX research, data science, spec-driven dev, marketing, and exec update |
+| [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 17 stages from strategy through UX research, analytics validation, data science, spec-driven dev, marketing, exec update, and retro |
 | [pm-agent](pm_agent.py) | **PM workflow** — discovery → PRD → stories → experiment → stakeholder update |
 | [eng-team](eng_team.py) | **Engineering team** — tech lead → backend → frontend → QA |
 
@@ -23,6 +23,7 @@ Strategy (CPO)
                     └── PRD (PM)
                             ├── Experiment Design (PM)
                             │       └── Data Science (Measurement Plan)
+                            │               └── Analytics Expert (Metrics Validation + Event Spec)
                             └── Design Spec (UI Designer)
                                     └── Architecture (Technical Architect)
                                             └── Spec (API contracts, schemas, acceptance specs)
@@ -32,6 +33,7 @@ Strategy (CPO)
                                                             └── QA Test Plan
                                                                     └── Marketing (Product Marketer)
                                                                             └── Exec Update (CPO / Director PM)
+                                                                                    └── Retro
 ```
 
 ```bash
@@ -43,6 +45,12 @@ python pdlc_orchestrator.py --goal "..." --stages prd,architecture,qa
 
 # Start from a specific stage (uses prior stage outputs if --output-dir was used)
 python pdlc_orchestrator.py --goal "..." --from-stage design
+
+# Revise a stage and re-run all downstream stages
+python pdlc_orchestrator.py --goal "..." --output-dir ./digest/ --revise-stage prd --revise-note "strengthen must-have rationale"
+
+# Enable confidence scoring for each stage
+python pdlc_orchestrator.py --goal "..." --score
 ```
 
 ---
@@ -73,6 +81,7 @@ python pdlc_orchestrator.py --goal "..." --from-stage design
 | [ux-researcher](ux_researcher.py) | Research plans, discussion guides, synthesis reports, personas, journey maps, usability findings | plan / guide / synthesis / persona / journey / usability / all |
 | [data-scientist](data_scientist.py) | Measurement plans, analysis plans, experiment results interpretation, ML scoping, data storytelling | measurement / analysis / experiment-results / ml-scoping / storytelling / all |
 | [spec-driven-dev](spec_driven_dev.py) | OpenAPI specs, JSON schemas, interface contracts, Given/When/Then acceptance specs, mock payloads, test matrices | openapi / schema / contract / acceptance / mock / test-matrix / all |
+| [analytics-expert](analytics_expert.py) | Validate metrics are measurable, produce instrumentation plans, write SQL queries, audit event schemas, build metric dictionaries | instrumentation / sql / audit / dictionary / all |
 
 ---
 
