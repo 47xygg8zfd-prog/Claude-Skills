@@ -33,6 +33,7 @@ A complete collection of Claude skills tailored for product management workflows
 | `spec-driven-dev` | OpenAPI specs, JSON schemas, interface contracts, Given/When/Then acceptance specs, mock payloads, test matrices | "write the API spec", "define the schema for", "write acceptance criteria as Given/When/Then", "generate a mock response", "what are the interfaces between services" |
 | `analytics` | Define, validate, and audit product analytics instrumentation — event specs, SQL queries, metric dictionaries | "what events should we track", "is this metric measurable", "validate our instrumentation", "write a query for", "our numbers look wrong" |
 | `continuous-discovery` | Opportunity solution trees, weekly interview cadence, assumption testing, retro-to-discovery feedback loop | "build an OST", "opportunity solution tree", "assumption test", "smallest test for", "next discovery questions", "continuous discovery" |
+| `agile-stories` | Sprint-ready epics, user stories with Given/When/Then AC, story points, sprint plans | "write stories for", "break into tickets", "create the backlog", "write AC for", "sprint plan for MVP 1", "estimate these stories" |
 
 ## How to Install
 

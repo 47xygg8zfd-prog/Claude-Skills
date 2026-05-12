@@ -10,7 +10,7 @@ Run these for end-to-end workflows — they call each specialist in sequence, pa
 
 | Agent | What It Does |
 |-------|-------------|
-| [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 20 stages from strategy through continuous discovery (OST, devil's advocate, assumption testing), analytics validation, quality-gated build stages, and retro with next-discovery feedback loop |
+| [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 22 stages from strategy through continuous discovery (OST, devil's advocate, MVP scoping), analytics validation, agile story generation, quality-gated build stages, and retro with next-discovery feedback loop |
 | [pm-agent](pm_agent.py) | **PM workflow** — discovery → PRD → stories → experiment → stakeholder update |
 | [eng-team](eng_team.py) | **Engineering team** — tech lead → backend → frontend → QA |
 
@@ -18,28 +18,30 @@ Run these for end-to-end workflows — they call each specialist in sequence, pa
 
 ```
 Strategy (CPO)
-    └── Discovery (PM)  ←─────────────────────────────────────────────────────────┐
-            └── UX Research                                                        │
-                    └── Opportunity Solution Tree (OST)  ← continuous discovery   │
-                            └── PRD (PM)                                           │
-                                    └── Devil's Advocate Review                    │
-                                            └── Experiment Design                  │
-                                                    └── Assumption Test            │
-                                                            └── Data Science        │
-                                                                    └── Analytics   │
-                                                                            └── Design Spec
-                                                                                    └── Architecture
-                                                                                            └── Spec
-                                                                                                    └── Tech Lead
-                                                                                                            ├── Backend
-                                                                                                            ├── Frontend
-                                                                                                            └── QA
-                                                                                                                    └── Marketing
-                                                                                                                            └── Exec Update
-                                                                                                                                    └── Retro → Next Discovery Questions ──┘
+    └── Discovery (PM)  ←────────────────────────────────────────────────────────────┐
+            └── UX Research                                                           │
+                    └── Opportunity Solution Tree (OST)                               │
+                            └── PRD (PM)                                              │
+                                    └── Devil's Advocate Review                       │
+                                            └── MVP Scope (v1 / v2 / v3)  ◄── gate  │
+                                                    └── Experiment Design             │
+                                                            └── Assumption Test       │
+                                                                    └── Data Science  │
+                                                                            └── Analytics
+                                                                                    └── Design Spec
+                                                                                            └── Architecture
+                                                                                                    └── Spec
+                                                                                                            └── Tech Lead
+                                                                                                                    └── Agile Stories (epics + sprint backlog)
+                                                                                                                            ├── Backend
+                                                                                                                            ├── Frontend
+                                                                                                                            └── QA
+                                                                                                                                    └── Marketing
+                                                                                                                                            └── Exec Update
+                                                                                                                                                    └── Retro → Next Discovery Questions ──┘
 ```
 
-**Quality gates** (auto-retry up to 2×): `ux-research`, `opportunity-solution-tree`, `prd`, `experiment`, `analytics`, `spec`
+**Quality gates** (auto-retry up to 2×): `ux-research`, `opportunity-solution-tree`, `prd`, `mvp-scope`, `experiment`, `analytics`, `spec`, `agile-stories`
 
 **Post-run**: cross-stage continuity check + assumption register printed after every full run
 
@@ -55,6 +57,11 @@ python pdlc_orchestrator.py --goal "..." --from-stage design
 
 # Revise a stage and re-run all downstream stages
 python pdlc_orchestrator.py --goal "..." --output-dir ./digest/ --revise-stage prd --revise-note "strengthen must-have rationale"
+
+# Generate a backlog from a PRD (standalone, no full pipeline needed)
+python agile_stories.py --file prd.md --mode all --mvp 1 --velocity 22 --output backlog.md
+python agile_stories.py --brief "runbook capture for on-call tool" --mode stories
+python agile_stories.py --file mvp-scope.md --mode sprint-plan --velocity 18
 
 # Enable confidence scoring for each stage (warns if score < 3/5)
 python pdlc_orchestrator.py --goal "..." --score
@@ -73,6 +80,7 @@ python pdlc_orchestrator.py --goal "..." --output-dir ./digest/ --stages discove
 | Agent | What It Does | Key Modes |
 |-------|-------------|-----------|
 | [prd-drafter](prd_drafter.py) | PRD from brief or ticket | — |
+| [agile-stories](agile_stories.py) | Epics, sprint-ready stories, AC, and sprint plans from a PRD or MVP scope | epics / stories / sprint-plan / all |
 | [okr-drafter](okr_drafter.py) | OKRs from strategic context | — |
 | [feature-prioritizer](feature_prioritizer.py) | RICE-scored backlog | rice / ice / moscow |
 | [experiment-designer](experiment_designer.py) | Full A/B experiment design | — |
