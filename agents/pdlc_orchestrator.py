@@ -1,34 +1,46 @@
 """
 PDLC/SDLC Orchestrator
 Runs the full product and engineering lifecycle for a feature — from strategic
-framing through discovery, design, architecture, implementation planning, QA,
-and stakeholder communication. Each stage passes its output to the next.
+framing through continuous discovery, design, architecture, implementation planning,
+QA, stakeholder communication, and retrospective. Each stage passes its output to
+the next. Quality gates auto-retry weak outputs before moving on.
 
-This is the "run the whole team" agent. Use it for major features. Use individual
-agents (pm_agent.py, eng_team.py, etc.) for single-stage work.
+PDLC Stages (20):
+  1.  strategy               → CPO frames strategic fit and investment case
+  2.  discovery              → PM frames the problem, hypotheses, and open questions
+  3.  ux-research            → UX Researcher synthesizes user needs and pain points
+  4.  opportunity-solution-tree → PM maps opportunities → solutions → assumptions (OST)
+  5.  prd                    → PM drafts the requirements document
+  6.  devil-advocate         → PM Challenger stress-tests the PRD's top 3 assumptions
+  7.  experiment             → PM designs the validation experiment
+  8.  assumption-test        → PM specs the smallest test before committing to A/B
+  9.  data-science           → Data Scientist defines measurement and instrumentation plan
+  10. analytics              → Analytics Expert validates metrics are measurable
+  11. design                 → UI Designer produces screen specs and user flows
+  12. architecture           → Technical Architect produces system design
+  13. spec                   → Spec-Driven Dev locks API contracts, schemas, and acceptance specs
+  14. tech-lead              → Tech Lead reviews and breaks down the work
+  15. backend                → Backend Engineer plans implementation
+  16. frontend               → Frontend Engineer plans implementation
+  17. qa                     → QA Engineer writes the test plan
+  18. marketing              → Product Marketer prepares launch messaging
+  19. exec-update            → CPO / Director PM produces the stakeholder update
+  20. retro                  → PM / Tech Lead retrospective + next discovery questions
 
-PDLC Stages:
-  1. strategy      → CPO frames strategic fit and investment case
-  2. discovery     → PM frames the problem, hypotheses, and open questions
-  3. ux-research   → UX Researcher synthesizes user needs and pain points
-  4. prd           → PM drafts the requirements document
-  5. experiment    → PM designs the validation experiment
-  6. data-science  → Data Scientist defines measurement and instrumentation plan
-  7. design        → UI Designer produces screen specs and user flows
-  8. architecture  → Technical Architect produces system design
-  9. spec          → Spec-Driven Dev locks API contracts, schemas, and acceptance specs
-  10. tech-lead    → Tech Lead reviews and breaks down the work
-  11. backend      → Backend Engineer plans implementation
-  12. frontend     → Frontend Engineer plans implementation
-  13. qa           → QA Engineer writes the test plan
-  14. marketing    → Product Marketer prepares launch messaging
-  15. exec-update  → CPO / Director PM produces the stakeholder update
-  16. retro        → PM / Tech Lead retrospective and next iteration plan
+Quality gates: ux-research, opportunity-solution-tree, prd, experiment, analytics, spec
+  — each stage is critiqued against a rubric; if it fails, re-run with critique injected (max 2 retries)
+
+Continuity check: after a full run, verifies the KPI chain holds from strategy → retro
+Assumption register: extracts all key assumptions across stages and flags validation gaps
 
 Usage:
     python pdlc_orchestrator.py --goal "add a weekly email digest for engineering managers"
     python pdlc_orchestrator.py --goal "..." --stages strategy,prd,architecture,qa
     python pdlc_orchestrator.py --goal "..." --output-dir ./digest-feature/ --from-stage design
+    python pdlc_orchestrator.py --goal "..." --output-dir ./digest/ --revise-stage prd --revise-note "..."
+    python pdlc_orchestrator.py --goal "..." --score
+    python pdlc_orchestrator.py --goal "..." --no-gate         # skip quality gates
+    python pdlc_orchestrator.py --goal "..." --output-dir ./d/ --snapshot  # continuous discovery mode
 """
 
 import anthropic
@@ -43,8 +55,11 @@ ALL_STAGES = [
     "strategy",
     "discovery",
     "ux-research",
+    "opportunity-solution-tree",
     "prd",
+    "devil-advocate",
     "experiment",
+    "assumption-test",
     "data-science",
     "analytics",
     "design",
@@ -63,8 +78,11 @@ STAGE_LABELS = {
     "strategy": "CPO — Strategic Framing",
     "discovery": "PM — Discovery Brief",
     "ux-research": "UX Researcher — Research Synthesis",
+    "opportunity-solution-tree": "PM — Opportunity Solution Tree",
     "prd": "PM — Product Requirements",
+    "devil-advocate": "PM Challenger — Devil's Advocate Review",
     "experiment": "PM — Experiment Design",
+    "assumption-test": "PM — Assumption Test Spec",
     "data-science": "Data Scientist — Measurement Plan",
     "analytics": "Analytics Expert — Instrumentation Validation",
     "design": "UI Designer — Design Spec",
@@ -137,43 +155,111 @@ If we [action], then [user segment] will [outcome], because [mechanism].
 
     "ux-research": """You are a senior UX researcher synthesizing user research for a feature.
 
-Given a discovery brief and strategic context, produce a focused research synthesis:
+Given a discovery brief and strategic context, produce a focused research synthesis.
+Be specific — cite specific observed behaviors, named user segments, and concrete pain
+frequencies. Attitudinal ("users say they want X") is weaker than behavioral ("users
+do Y when X isn't available"). Aim for behavioral evidence.
 
 # UX Research Synthesis: [Feature]
 
-## What We Need to Learn
-[2-3 research questions that, if answered, would de-risk the PRD]
+## Research Questions Answered
+[2-3 questions that, if answered, would de-risk the PRD — with the answer to each]
 
-## Assumed User Profile
-**Who**: [Target user — role, context, experience level]
-**Their current behavior**: [How they accomplish this today — tool, workaround, frequency]
-**Their stated goal**: [What they say they want]
-**Their underlying goal**: [What they actually need — may differ]
+## Participants
+| # | Role | Company type | Tenure | Key quote |
+|---|------|-------------|--------|-----------|
+| 1 | [role] | [type] | [years] | "[observed behavior or direct quote]" |
+[Minimum 5 participants. If this is simulated research, invent realistic participants.]
 
-## Assumed Pain Points (ranked)
-| Pain | Frequency | Intensity | Evidence / Source |
-|------|-----------|-----------|------------------|
-| [pain] | Daily/Weekly/Occasional | High/Med/Low | [interview quote / behavioral data / assumption] |
+## Behavioral Pain Points (ranked)
+| Pain | Frequency | Intensity | Behavioral evidence |
+|------|-----------|-----------|-------------------|
+| [pain] | Daily/Weekly/Occ. | High/Med/Low | [what user does, not what they say] |
 
 ## Jobs to Be Done
 | When... | I want to... | So I can... |
 |---------|-------------|------------|
 | [situation] | [motivation] | [outcome] |
 
+## Root Cause Hypothesis
+[One paragraph: not just what hurts, but WHY it hurts — the underlying mechanism.
+This is what the PRD must address, not just the surface symptom.]
+
 ## Key Insights for the PRD
-1. **[Insight]**: [What this means for requirements]
+1. **[Insight]**: [What this means for requirements — specific and actionable]
 2. **[Insight]**: [Implication]
 3. **[Insight]**: [Implication]
 
-## Risks If We Skip Research
-[What we're assuming without validation — and what could go wrong]
+## Risks If We Skip Further Research
+[What we're assuming without validation — and what could go wrong]""",
 
-## Recommended Research (if time allows)
-[1-2 specific research activities that would most de-risk the build — with time estimate]""",
+    "opportunity-solution-tree": """You are a senior PM building an Opportunity Solution Tree (OST) to structure
+discovery findings before the PRD is written.
+
+Given discovery findings and UX research, map the opportunity space systematically.
+Every Must Have in the PRD should trace to an opportunity node here.
+Requirements that don't trace to an opportunity are opinions, not products.
+
+# Opportunity Solution Tree: [Feature]
+
+**Desired Outcome**: [The business/user outcome from strategy — one measurable statement]
+
+---
+
+## Opportunity Tree
+
+For each distinct user pain or unmet need from research, create an opportunity node.
+Opportunities must be in user language, grounded in behavioral evidence.
+
+### Opportunity 1: [User pain or unmet need — written from user's perspective]
+**Evidence**: [Quote or behavioral data that confirms this pain]
+**User segment**: [Who experiences this — be specific]
+**Frequency**: [How often this occurs]
+
+Solution candidates:
+- **[Solution A]**: [One sentence] → Riskiest assumption: [what must be true for this to work]
+- **[Solution B]**: [One sentence] → Riskiest assumption: [what must be true]
+
+### Opportunity 2: [...]
+
+[Continue for each distinct opportunity from research — typically 2-4]
+
+---
+
+## Assumption Map
+
+For solutions most likely to be pursued:
+
+| Solution | Assumption | Risk if wrong | Smallest test | Confidence |
+|---------|-----------|--------------|--------------|-----------|
+| [solution] | [what must be true] | [consequence] | [interview / smoke / fake door] | High/Med/Low |
+
+---
+
+## OST Diagram
+
+```
+Desired Outcome: [outcome]
+├── Opportunity 1: [pain]
+│   ├── Solution A  →  Assumption: [...]
+│   └── Solution B  →  Assumption: [...]
+└── Opportunity 2: [pain]
+    └── Solution C  →  Assumption: [...]
+```
+
+---
+
+## PRD Traceability
+
+Every Must Have requirement in the PRD should map here. Pre-populate expected requirements:
+
+| Expected PRD requirement | Maps to opportunity | Confidence this is the right solution |
+|-------------------------|-------------------|--------------------------------------|
+| [expected requirement] | Opportunity [N] | High/Med/Low — [why] |""",
 
     "prd": """You are a senior PM writing a product requirements document.
 
-Given discovery findings, UX research, and strategic context, produce a focused PRD.
+Given discovery findings, UX research, and the Opportunity Solution Tree, produce a focused PRD.
 
 CRITICAL RULE — Research justification: Every Must Have requirement must be followed
 immediately by a "Why (from research):" line citing the specific finding, pain point,
@@ -207,10 +293,10 @@ Unowned questions don't get answered.
 
 **Must have**:
 - [Requirement]
-  Why (from research): [Specific finding, pain point, or quote that justifies this — not "users want it"]
+  Why (from research): [Specific finding, pain point, or quote — not "users want it"]
 
 **Should have**:
-- [Requirement — no research citation required, but explain the value]
+- [Requirement — explain the value]
 
 **Could have**:
 - [Requirement]
@@ -223,9 +309,57 @@ Unowned questions don't get answered.
 |---|---------|-------|------------|--------------------------|
 | 1 | [Blocker] | [Role] | [Date] | [delayed / descoped / kills the feature] |""",
 
+    "devil-advocate": """You are a PM challenger. You have been given a PRD and your job is to challenge its
+top 3 assumptions before the experiment and build stages proceed. You are not trying
+to kill the feature — you are trying to make it better by forcing the team to address
+the weakest points in their thinking before they commit engineering resources.
+
+Be specific. Reference the PRD text. Name the exact claim you're challenging.
+Don't be vague ("have you considered users might not want this?") — make the argument.
+
+# Devil's Advocate Review: [Feature]
+
+**Date**: [today]
+
+---
+
+## The 3 Biggest Assumptions This PRD Makes
+
+### Assumption 1: [State the assumption in one sentence — quote or reference the PRD directly]
+
+**Where it appears**: [Quote or section reference]
+**Why this might be wrong**: [Specific counter-argument — what evidence is missing, what
+alternative explanation exists, what comparable feature at another company failed and why]
+**If wrong, impact**: [What happens to the feature and its metrics if this assumption doesn't hold]
+**Alternative approach**: [What to do if this assumption turns out to be false]
+
+### Assumption 2: [...]
+
+### Assumption 3: [...]
+
+---
+
+## Required PRD Responses
+
+Before proceeding to experiment, the PRD author must respond to each challenge:
+
+| # | Assumption challenged | Response needed | Accepted by | Date |
+|---|----------------------|----------------|------------|------|
+| 1 | [assumption] | [Specific evidence or argument that addresses the challenge] | | |
+| 2 | | | | |
+| 3 | | | | |
+
+---
+
+## One Thing This PRD Gets Right
+
+[What's well-reasoned or well-evidenced in the PRD. This builds credibility.
+The challenge is only useful if the things being challenged are actually weak.]""",
+
     "experiment": """You are a senior PM designing a product experiment.
 
-Given a PRD, produce a focused experiment design:
+Given a PRD and devil's advocate review, produce a focused experiment design.
+If the devil's advocate raised concerns that affect the experiment hypothesis, address them.
 
 # Experiment Design: [Feature]
 
@@ -239,18 +373,80 @@ Given a PRD, produce a focused experiment design:
 - **Allocation**: 50/50 (adjust if high-risk)
 
 ## Metrics
-- **Primary**: [metric] — MDE: [smallest worthwhile change]
-- **Guardrails**: [metrics that must not degrade]
+- **Primary**: [metric] — baseline: [value] — MDE: [smallest worthwhile change, as %, with rationale]
+- **Guardrails**: [metrics that must not degrade — specific thresholds]
 
-## Duration
-- **Required sample**: [N per group]
+## Sample Size & Duration
+- **Required sample**: [N per group — show the calculation]
 - **Estimated runtime**: [X weeks at current traffic]
-- **Minimum**: 2 weeks
+- **Minimum**: 2 weeks regardless of sample size reached
 
 ## Decision Criteria
 - **Ship**: primary ↑ ≥ MDE, guardrails stable, p < 0.05
-- **Iterate**: directionally positive, below MDE
-- **Kill**: flat/negative p < 0.05, OR guardrail breached""",
+- **Iterate**: directionally positive but below MDE — [what iteration looks like]
+- **Kill**: flat/negative p < 0.05, OR guardrail breached by > [threshold]
+
+## Riskiest Assumption
+[The single assumption that, if false, would invalidate the experiment before it completes.
+This feeds directly into the assumption-test stage.]""",
+
+    "assumption-test": """You are a senior PM. Before committing to a full A/B experiment, identify the
+riskiest assumption in the experiment design and spec the smallest test to validate it.
+
+Full A/B tests take weeks and significant engineering effort. If the riskiest assumption
+is false, the experiment is wasted. Test the assumption cheaply first.
+
+Test method hierarchy (cheapest to most expensive):
+  5-user interview → data pull → smoke test → fake door → concierge → A/B
+
+# Assumption Test: [Feature]
+
+**Date**: [today]
+
+---
+
+## Top 3 Assumptions Ranked by Risk
+
+| # | Assumption | Risk if wrong | Engineering cost to test |
+|---|-----------|--------------|------------------------|
+| 1 | [assumption — most dangerous] | [experiment fails / feature pivot] | [none / < 1 day / 1-3 days] |
+| 2 | [assumption] | [consequence] | [cost] |
+| 3 | [assumption] | [consequence] | [cost] |
+
+---
+
+## Smallest Test for Assumption #1
+
+**Assumption**: [Restate clearly]
+**Test method**: [Interview / Data pull / Smoke test / Fake door / Concierge]
+
+### What We'll Do
+[One paragraph — specific description of the test setup, materials needed, and what
+we're measuring. Name the tool or channel if relevant (e.g., Typeform landing page,
+Intercom message, 30-min interview script).]
+
+### Participants
+[N users, which segment, how recruited, how long to recruit]
+
+### Timeline
+- Setup: [N days / hours]
+- Run: [N days]
+- Decision point: [Specific date]
+- Engineering cost: [None / < 1 day / 1–3 days]
+
+### Success Criteria
+
+**Proceed to A/B if**: [Specific threshold — "≥ 3/5 users complete the flow without prompting"]
+**Pivot or kill if**: [Specific threshold — "< 1/5 users understand the value prop unprompted"]
+
+---
+
+## Recommendation
+
+**Run this test before the A/B**: Yes / No
+
+[One paragraph justifying the recommendation. If yes: what decision it unlocks and by when.
+If no: what evidence already exists that makes this assumption low-risk.]""",
 
     "data-science": """You are a senior data scientist. The PM has already defined the hypothesis and
 success metrics in the PRD and experiment design. Your job is NOT to redefine those —
@@ -555,7 +751,12 @@ Format each as: "**[Decision]**: [Concern] → [What I'd do instead and why]"]
 - [ ] [specific technical requirement]
 - [ ] Tests cover happy path + top 3 error cases
 - [ ] Analytics events fire correctly
-- [ ] Runbook updated if new failure mode""",
+- [ ] Runbook updated if new failure mode
+
+## Risks Flagged
+| Risk | Severity | Mitigation | Owner |
+|------|---------|-----------|-------|
+| [technical risk] | P0/P1/P2 | [specific mitigation] | [team] |""",
 
     "backend": """You are a senior backend engineer given a ticket and tech lead brief.
 
@@ -734,13 +935,15 @@ Never start with "We're excited to announce." Never feature-dump.]
 ---
 
 Rules:
-- Every headline must pass the "so what?" test — if a customer can ask "so what?" after reading it, rewrite it
+- Every headline must pass the "so what?" test
 - Avoid: excited, thrilled, proud, game-changer, revolutionary, seamless, robust, best-in-class
-- Proof points must be specific — "saves time" is not a proof point; "reduces weekly review time from 2 hours to 15 minutes" is""",
+- Proof points must be specific — "saves time" is not a proof point""",
 
     "exec-update": """You are a Director of PM writing an executive update on a feature launch.
 
-Given the full feature context (strategy through QA), produce a crisp exec update:
+Given the full feature context (strategy through QA), produce a crisp exec update.
+If the tech lead flagged risks, surface the most critical ones here — don't let them
+disappear between tech-lead and exec visibility.
 
 # Exec Update: [Feature] — [Date]
 
@@ -759,9 +962,9 @@ Given the full feature context (strategy through QA), produce a crisp exec updat
 | [primary] | [value] | [goal] | [method] |
 
 ## Risks
-| Risk | Mitigation | Owner |
-|------|-----------|-------|
-| [risk] | [what we're doing] | [team] |
+| Risk | Severity | Mitigation | Owner |
+|------|---------|-----------|-------|
+| [risk — escalated from tech-lead if applicable] | P0/P1 | [what we're doing] | [team] |
 
 ## Launch Plan
 - **Soft launch**: [date / % rollout]
@@ -781,22 +984,15 @@ This is not a feel-good summary. Be direct about what failed and why.
 
 ## What We Got Wrong
 
-For each assumption in the original strategy or PRD that turned out to be incorrect or
-partially wrong, state: what we assumed, what actually happened, and why we were wrong.
-
 | Assumption | What we assumed | What actually happened | Root cause of the miss |
 |-----------|----------------|----------------------|----------------------|
-| [assumption] | [belief at start] | [reality] | [why we were wrong — bad data / wrong user / overconfidence] |
+| [assumption] | [belief at start] | [reality] | [bad data / wrong user / overconfidence] |
 
 ## What Slowed Us Down
 
-Technical, process, or communication friction that added time or rework:
 - **[Issue]**: [What happened, estimated time lost, how to prevent next time]
 
 ## What We'd Do Differently
-
-If we were starting this feature over today, what would change?
-Be specific — not "better communication" but "run the spec stage before architecture, not after."
 
 1. [Specific change — process, sequence, or decision]
 2. [Specific change]
@@ -804,13 +1000,9 @@ Be specific — not "better communication" but "run the spec stage before archit
 
 ## What Actually Worked
 
-What should we keep doing — and why it worked here specifically:
-- [Practice]: [Why it helped on this feature — don't generalize]
+- [Practice]: [Why it helped on this feature specifically — don't generalize]
 
 ## Open Questions That Were Never Resolved
-
-From the PRD open questions table: which ones were marked "kills the feature" but went unanswered?
-Which ones were deferred and still haven't been answered post-launch?
 
 | Question | Original consequence | What happened | Still open? |
 |---------|---------------------|--------------|------------|
@@ -818,20 +1010,69 @@ Which ones were deferred and still haven't been answered post-launch?
 
 ## Next Iteration Recommendation
 
-Based on what we now know, what should v2 address?
 - **Highest-confidence addition**: [what users actually asked for vs. what we guessed]
 - **Biggest gap to close**: [what v1 is missing that's hurting retention or conversion]
-- **What to cut or simplify**: [what we built that's not being used or is causing friction]
+- **What to cut or simplify**: [what we built that's not being used or causing friction]
 
 ## Metrics Check-In
 
-For each success metric from the PRD, report current status:
-
 | Metric | Target | Current | On track? | Action needed |
 |--------|--------|---------|----------|--------------|
-| [metric] | [target] | [actual or "data pending"] | Yes/No/TBD | [what to do if off track] |""",
+| [metric] | [target] | [actual or "data pending"] | Yes/No/TBD | [what to do if off track] |
+
+## Next Discovery Questions
+
+Questions this retro surfaced that the next discovery cycle must answer.
+Feed these into the next run's discovery stage as prior context.
+
+| # | Question | Why it matters | Suggested method | Priority |
+|---|---------|---------------|-----------------|---------|
+| 1 | [Specific question — not "understand users better"] | [What decision it unblocks] | [5 interviews / cohort pull / fake door] | P0/P1/P2 |
+| 2 | [Question] | [Decision unlocked] | [Method] | [Priority] |
+| 3 | [Question] | [Decision unlocked] | [Method] | [Priority] |""",
 }
 
+
+# Per-stage rubrics for the quality gate. Each item is a yes/no check.
+# Stages not in this dict skip the gate pass entirely.
+QUALITY_GATES = {
+    "ux-research": [
+        "Are there at least 5 named or described participants in a table?",
+        "Do pain points cite behavioral evidence (observed actions), not just stated preferences?",
+        "Is there a root cause hypothesis explaining WHY the pain exists, not just what it is?",
+        "Are Jobs-to-be-Done framed as outcomes the user wants to achieve (not feature requests)?",
+    ],
+    "opportunity-solution-tree": [
+        "Are there at least 2 opportunity nodes, each grounded in behavioral evidence?",
+        "Does each solution candidate map to exactly one opportunity node?",
+        "Is there an assumption map with at least one riskiest assumption per solution?",
+        "Is there a PRD traceability table mapping expected requirements to opportunity nodes?",
+    ],
+    "prd": [
+        "Does every Must Have requirement have a 'Why (from research):' line with a specific finding?",
+        "Does every success metric have a numeric baseline and target (not 'TBD' or 'improve')?",
+        "Does every open question have a named owner (role), target date, and consequence if unresolved?",
+        "Is there at least one guardrail metric — a metric that must not degrade?",
+    ],
+    "experiment": [
+        "Is the MDE (minimum detectable effect) stated as a specific number with rationale?",
+        "Is the required sample size shown with a calculation (not just estimated)?",
+        "Are ship/iterate/kill decision criteria defined with explicit thresholds?",
+        "Is the estimated run time stated in weeks and is it 8 weeks or fewer?",
+    ],
+    "analytics": [
+        "Is every PRD success metric present in the validation table (no metrics missing)?",
+        "Do all ❌ UNMEASURABLE flags include a specific fix action (not just 'needs work')?",
+        "Does every event spec state which platforms it must fire on?",
+        "Is there a pre-launch checklist with at least 3 specific, assignable items?",
+    ],
+    "spec": [
+        "Does the OpenAPI spec cover all endpoints implied by the architecture doc?",
+        "Does every user story from the PRD have at least one Given/When/Then scenario?",
+        "Are error-path scenarios present in the acceptance specs (not just happy path)?",
+        "Are all schemas defined in components/schemas with no inline objects in paths?",
+    ],
+}
 
 SUMMARIZER_PROMPT = """Summarize the following PDLC stage output in 150 words or fewer.
 Preserve: key decisions made, primary outputs (metrics, endpoints, requirements, etc.),
@@ -852,6 +1093,41 @@ DECISION_READINESS: [1-5] — [one specific blocker, or confirmation the next st
 OVERALL: [1-5]
 FLAGS: [Comma-separated list of specific issues, or "none"]"""
 
+CONTINUITY_CHECK_PROMPT = """You are a PDLC quality auditor checking cross-stage consistency.
+
+Verify the following chain holds across the stage outputs provided:
+1. Every KPI or success metric defined in Strategy/PRD appears in Data Science instrumentation
+2. Every instrumented metric is validated in the Analytics stage (not dropped)
+3. Every analytics-validated metric has at least one QA test case or acceptance scenario
+
+For each break in the chain, output:
+  ORPHAN: [metric name] — dropped at [stage] — impact: [consequence]
+
+If the full chain is intact:
+  CHAIN: COMPLETE
+
+Then extract the top 8 key assumptions made across all stages (claims stated as fact
+but not yet validated by research, data, or experiment). Format as:
+
+## Assumption Register
+| Assumption | Stage where made | Risk if wrong | Validation method | Status |
+|-----------|-----------------|--------------|------------------|--------|
+[Populate from the actual stage outputs — be specific, not generic]"""
+
+
+# Stages whose outputs are compressed to ~150 words when passed as context to
+# later stages. Full outputs are always saved to disk; summaries keep prompt size bounded.
+SUMMARIZE_WHEN_DOWNSTREAM = {
+    "strategy",
+    "discovery",
+    "ux-research",
+    "opportunity-solution-tree",
+    "devil-advocate",
+    "assumption-test",
+    "experiment",
+    "design",
+}
+
 
 def summarize_output(text: str) -> str:
     """Compress a stage output to ~150 words for use as context in later stages."""
@@ -863,8 +1139,32 @@ def summarize_output(text: str) -> str:
     return result.content[0].text
 
 
-def score_stage(stage: str, input_text: str, output_text: str) -> None:
-    """Print a quality score for a stage output. Does not affect the pipeline."""
+def critique_stage(stage: str, output: str) -> tuple[bool, str]:
+    """Run quality gate checks against a stage output. Returns (passed, critique_text)."""
+    rubric_items = QUALITY_GATES[stage]
+    rubric_text = "\n".join(f"{i+1}. {item}" for i, item in enumerate(rubric_items))
+
+    prompt = (
+        f"Quality gate for: {STAGE_LABELS[stage]}\n\n"
+        f"Check whether this output passes ALL of these criteria:\n{rubric_text}\n\n"
+        f"For each criterion, answer YES or NO and explain in one sentence.\n"
+        f"Final line must be exactly: GATE: PASS or GATE: FAIL\n\n"
+        f"Output to review:\n{output[:3500]}"
+    )
+    result = client.messages.create(
+        model=MODEL,
+        max_tokens=500,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    response = result.content[0].text
+    passed = "GATE: PASS" in response
+    failures = [ln for ln in response.splitlines() if ln.strip().startswith("NO") or "GATE: FAIL" in ln]
+    critique = "\n".join(failures) if failures else response[-400:]
+    return passed, critique
+
+
+def score_stage(stage: str, input_text: str, output_text: str) -> int:
+    """Print a quality score for a stage output. Returns overall score (1–5)."""
     label = STAGE_LABELS[stage]
     print(f"\n  ┌── QUALITY SCORE: {label}")
     result = client.messages.create(
@@ -875,37 +1175,93 @@ def score_stage(stage: str, input_text: str, output_text: str) -> None:
             "content": f"{SCORER_PROMPT}\n\nStage: {label}\n\nOutput:\n{output_text[:3000]}",
         }],
     )
+    overall = 0
     for line in result.content[0].text.strip().splitlines():
         print(f"  │  {line}")
+        if line.startswith("OVERALL:"):
+            try:
+                overall = int(line.split(":")[1].strip()[0])
+            except (ValueError, IndexError):
+                pass
     print("  └──")
+    return overall
 
 
-# Stages whose outputs should be summarized when passed as context to later stages.
-# Full outputs are still saved to disk; only the summary is passed forward.
-SUMMARIZE_WHEN_DOWNSTREAM = {"strategy", "discovery", "ux-research", "experiment", "design"}
+def run_continuity_check(outputs: dict[str, str]) -> None:
+    """Verify the KPI chain holds and print an assumption register."""
+    relevant_keys = {"strategy", "prd", "data-science", "analytics", "qa"}
+    available = {k: v for k, v in outputs.items() if k in relevant_keys}
+    if len(available) < 2:
+        return
 
-
-def run_stage(stage: str, content: str) -> str:
-    system = SYSTEM_PROMPTS[stage]
-    label = STAGE_LABELS[stage]
+    combined = "\n\n".join(
+        f"[{STAGE_LABELS.get(k, k).upper()}]\n{v[:1500]}"
+        for k, v in available.items()
+    )
 
     print(f"\n{'━' * 64}")
-    print(f"  STAGE {ALL_STAGES.index(stage) + 1}/{len(ALL_STAGES)}: {label}")
+    print(f"  CROSS-STAGE CONTINUITY CHECK & ASSUMPTION REGISTER")
     print(f"{'━' * 64}\n")
 
-    result = []
-    with client.messages.stream(
+    result = client.messages.create(
         model=MODEL,
-        max_tokens=2500,
-        system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
-        messages=[{"role": "user", "content": content}],
-    ) as stream:
-        for text in stream.text_stream:
-            print(text, end="", flush=True)
-            result.append(text)
-
+        max_tokens=800,
+        messages=[{
+            "role": "user",
+            "content": f"{CONTINUITY_CHECK_PROMPT}\n\nStage outputs:\n{combined}",
+        }],
+    )
+    print(result.content[0].text)
     print()
-    return "".join(result)
+
+
+def run_stage(stage: str, content: str, gate: bool = True, max_retries: int = 2) -> str:
+    """Run a PDLC stage, stream output, and apply quality gate with auto-retry."""
+    system = SYSTEM_PROMPTS[stage]
+    label = STAGE_LABELS[stage]
+    stage_num = ALL_STAGES.index(stage) + 1
+
+    print(f"\n{'━' * 64}")
+    print(f"  STAGE {stage_num}/{len(ALL_STAGES)}: {label}")
+    print(f"{'━' * 64}\n")
+
+    def _stream_run(prompt_content: str) -> str:
+        parts = []
+        with client.messages.stream(
+            model=MODEL,
+            max_tokens=2500,
+            system=[{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
+            messages=[{"role": "user", "content": prompt_content}],
+        ) as stream:
+            for text in stream.text_stream:
+                print(text, end="", flush=True)
+                parts.append(text)
+        print()
+        return "".join(parts)
+
+    output = _stream_run(content)
+
+    if gate and stage in QUALITY_GATES:
+        for attempt in range(max_retries):
+            passed, critique = critique_stage(stage, output)
+            if passed:
+                print(f"\n  ✓ Quality gate passed")
+                break
+            if attempt < max_retries - 1:
+                print(f"\n  ⚠ Quality gate failed (attempt {attempt + 1}/{max_retries})")
+                print(f"    Issues: {critique[:300]}")
+                print(f"    Retrying with critique injected...\n")
+                retry_content = (
+                    f"{content}\n\n"
+                    f"[QUALITY GATE FEEDBACK — each issue below must be addressed in your response]:\n"
+                    f"{critique}"
+                )
+                output = _stream_run(retry_content)
+            else:
+                print(f"\n  ⚠ Quality gate: issues remain after {max_retries} attempts — proceeding")
+                print(f"    Unresolved: {critique[:300]}")
+
+    return output
 
 
 def build_input(
@@ -916,12 +1272,15 @@ def build_input(
 ) -> str:
     base = f"Feature goal:\n{goal}"
 
-    context_stages = {
+    context_stages: dict[str, list[str]] = {
         "discovery": ["strategy"],
         "ux-research": ["strategy", "discovery"],
-        "prd": ["strategy", "discovery", "ux-research"],
-        "experiment": ["prd"],
-        "data-science": ["prd", "experiment"],
+        "opportunity-solution-tree": ["strategy", "discovery", "ux-research"],
+        "prd": ["strategy", "ux-research", "opportunity-solution-tree"],
+        "devil-advocate": ["prd"],
+        "experiment": ["prd", "devil-advocate"],
+        "assumption-test": ["prd", "experiment"],
+        "data-science": ["prd", "experiment", "assumption-test"],
         "analytics": ["prd", "data-science"],
         "design": ["prd", "ux-research"],
         "architecture": ["prd", "design"],
@@ -931,7 +1290,7 @@ def build_input(
         "frontend": ["prd", "design", "architecture", "spec", "tech-lead"],
         "qa": ["prd", "spec", "backend", "frontend", "tech-lead"],
         "marketing": ["strategy", "prd", "design"],
-        "exec-update": ["strategy", "prd", "experiment", "data-science", "architecture", "marketing"],
+        "exec-update": ["strategy", "prd", "experiment", "data-science", "architecture", "tech-lead", "marketing"],
         "retro": ["strategy", "prd", "exec-update"],
     }
 
@@ -940,8 +1299,6 @@ def build_input(
     for p in prior:
         if p not in outputs:
             continue
-        # Use summary for early stages when passed as context to late stages,
-        # to keep prompt size manageable and focus each stage on relevant inputs.
         use_summary = p in SUMMARIZE_WHEN_DOWNSTREAM and p in summaries
         text = summaries[p] if use_summary else outputs[p]
         label = f"{STAGE_LABELS[p].upper()}{'  [summary]' if use_summary else ''}"
@@ -955,7 +1312,10 @@ def run_pdlc(
     stages: list[str],
     output_dir: str | None = None,
     score: bool = False,
+    gate: bool = True,
+    score_warn_threshold: int = 3,
     prior_outputs: dict[str, str] | None = None,
+    snapshot: bool = False,
 ) -> dict[str, str]:
     outputs: dict[str, str] = dict(prior_outputs or {})
     summaries: dict[str, str] = {}
@@ -965,26 +1325,52 @@ def run_pdlc(
         if stage in SUMMARIZE_WHEN_DOWNSTREAM:
             summaries[stage] = summarize_output(text)
 
+    # Snapshot mode: inject prior discovery log as context for the discovery stage
+    prior_discovery_log = ""
+    if snapshot and output_dir and "discovery" in stages:
+        log_path = Path(output_dir) / "discovery_log.md"
+        if log_path.exists():
+            prior_discovery_log = log_path.read_text()
+            print(f"\n  [snapshot] Loading prior discovery log from {log_path}")
+
     print(f"\n{'═' * 64}")
     print(f"  PDLC/SDLC ORCHESTRATOR")
     print(f"  Goal: {goal[:60]}{'...' if len(goal) > 60 else ''}")
     print(f"  Stages: {' → '.join(stages)}")
+    flags = []
     if score:
-        print("  Quality scoring: ON")
+        flags.append("scoring ON")
+    if not gate:
+        flags.append("quality gates OFF")
+    if snapshot:
+        flags.append("continuous discovery snapshot ON")
+    if flags:
+        print(f"  Options: {', '.join(flags)}")
     print(f"{'═' * 64}")
 
     for stage in stages:
-        content = build_input(stage, goal, outputs, summaries)
-        result = run_stage(stage, content)
+        stage_goal = goal
+        if stage == "discovery" and prior_discovery_log:
+            stage_goal = (
+                f"{goal}\n\n"
+                f"[PRIOR DISCOVERY LOG — synthesize new findings with these existing insights]:\n"
+                f"{prior_discovery_log[:2000]}"
+            )
+
+        content = build_input(stage, stage_goal, outputs, summaries)
+        result = run_stage(stage, content, gate=gate)
         outputs[stage] = result
 
-        # Build a compressed summary for stages that will be used as upstream
-        # context in many later stages — keeps prompt size bounded on long runs.
         if stage in SUMMARIZE_WHEN_DOWNSTREAM:
             summaries[stage] = summarize_output(result)
 
         if score:
-            score_stage(stage, content, result)
+            overall = score_stage(stage, content, result)
+            if overall > 0 and overall < score_warn_threshold:
+                print(
+                    f"\n  ⚠ Score {overall}/5 is below threshold {score_warn_threshold} "
+                    f"— consider revising this stage with --revise-stage {stage}"
+                )
 
         if output_dir:
             out_path = Path(output_dir)
@@ -993,11 +1379,25 @@ def run_pdlc(
             (out_path / filename).write_text(result)
             print(f"\n  → Saved to {out_path / filename}")
 
+        # Snapshot mode: append discovery output to discovery_log.md
+        if snapshot and stage == "discovery" and output_dir:
+            from datetime import date
+            log_path = Path(output_dir) / "discovery_log.md"
+            datestamp = date.today().isoformat()
+            separator = f"\n\n---\n\n## Snapshot: {datestamp}\n\n"
+            existing = log_path.read_text() if log_path.exists() else ""
+            log_path.write_text(existing + separator + result)
+            print(f"  → Discovery snapshot appended to {log_path}")
+
     print(f"\n{'═' * 64}")
     print(f"  COMPLETE — {len(stages)} stage(s) run")
     if output_dir:
         print(f"  All outputs saved to: {output_dir}/")
-    print(f"{'═' * 64}\n")
+    print(f"{'═' * 64}")
+
+    # Post-run analysis: continuity check and assumption register
+    run_continuity_check(outputs)
+
     return outputs
 
 
@@ -1057,9 +1457,23 @@ def main():
         action="store_true",
         help="Print a quality score (completeness, specificity, decision-readiness) after each stage",
     )
+    parser.add_argument(
+        "--no-gate",
+        action="store_true",
+        help="Disable quality gates — stages run once with no auto-retry",
+    )
+    parser.add_argument(
+        "--snapshot",
+        action="store_true",
+        help=(
+            "Continuous discovery mode — append discovery output to discovery_log.md "
+            "and inject prior log as context. Requires --output-dir."
+        ),
+    )
     args = parser.parse_args()
 
     goal = args.goal if args.goal else Path(args.file).read_text()
+    gate = not args.no_gate
 
     if args.revise_stage:
         if not args.output_dir:
@@ -1068,13 +1482,20 @@ def main():
         prior_outputs = load_outputs_from_dir(args.output_dir)
         if args.revise_note:
             goal = f"{goal}\n\n[REVISION NOTE]: {args.revise_note}"
-        # Re-run from the revised stage through the end of the pipeline
         start_idx = ALL_STAGES.index(args.revise_stage)
         stages = ALL_STAGES[start_idx:]
         print(f"\n  REVISING from stage: {args.revise_stage}")
         if args.revise_note:
             print(f"  Revision note: {args.revise_note}")
-        run_pdlc(goal, stages=stages, output_dir=args.output_dir, score=args.score, prior_outputs=prior_outputs)
+        run_pdlc(
+            goal,
+            stages=stages,
+            output_dir=args.output_dir,
+            score=args.score,
+            gate=gate,
+            prior_outputs=prior_outputs,
+            snapshot=args.snapshot,
+        )
         return
 
     if args.stages:
@@ -1090,7 +1511,14 @@ def main():
     else:
         stages = ALL_STAGES
 
-    run_pdlc(goal, stages=stages, output_dir=args.output_dir, score=args.score)
+    run_pdlc(
+        goal,
+        stages=stages,
+        output_dir=args.output_dir,
+        score=args.score,
+        gate=gate,
+        snapshot=args.snapshot,
+    )
 
 
 if __name__ == "__main__":

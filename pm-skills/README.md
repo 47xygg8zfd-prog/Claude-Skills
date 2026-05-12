@@ -32,6 +32,7 @@ A complete collection of Claude skills tailored for product management workflows
 | `data-scientist` | Measurement plans, analysis plans, experiment results, ML scoping, data storytelling | "how should we measure this", "interpret these results", "is this significant", "scope a model for..." |
 | `spec-driven-dev` | OpenAPI specs, JSON schemas, interface contracts, Given/When/Then acceptance specs, mock payloads, test matrices | "write the API spec", "define the schema for", "write acceptance criteria as Given/When/Then", "generate a mock response", "what are the interfaces between services" |
 | `analytics` | Define, validate, and audit product analytics instrumentation — event specs, SQL queries, metric dictionaries | "what events should we track", "is this metric measurable", "validate our instrumentation", "write a query for", "our numbers look wrong" |
+| `continuous-discovery` | Opportunity solution trees, weekly interview cadence, assumption testing, retro-to-discovery feedback loop | "build an OST", "opportunity solution tree", "assumption test", "smallest test for", "next discovery questions", "continuous discovery" |
 
 ## How to Install
 
