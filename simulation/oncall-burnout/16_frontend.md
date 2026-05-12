@@ -1,7 +1,7 @@
 # File 16 — Frontend Implementation Plan
 **Product**: Sentinel — On-Call Intelligence Platform  
 **Date**: 2026-05-12  
-**Stack**: React 18, TypeScript, Recharts, Tailwind CSS  
+**Stack**: React (TypeScript), Recharts, custom hooks, REST + WebSocket  
 
 ---
 
