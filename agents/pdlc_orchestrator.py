@@ -5,29 +5,31 @@ framing through continuous discovery, design, architecture, implementation plann
 QA, stakeholder communication, and retrospective. Each stage passes its output to
 the next. Quality gates auto-retry weak outputs before moving on.
 
-PDLC Stages (20):
+PDLC Stages (22):
   1.  strategy               → CPO frames strategic fit and investment case
   2.  discovery              → PM frames the problem, hypotheses, and open questions
   3.  ux-research            → UX Researcher synthesizes user needs and pain points
   4.  opportunity-solution-tree → PM maps opportunities → solutions → assumptions (OST)
   5.  prd                    → PM drafts the requirements document
   6.  devil-advocate         → PM Challenger stress-tests the PRD's top 3 assumptions
-  7.  experiment             → PM designs the validation experiment
-  8.  assumption-test        → PM specs the smallest test before committing to A/B
-  9.  data-science           → Data Scientist defines measurement and instrumentation plan
-  10. analytics              → Analytics Expert validates metrics are measurable
-  11. design                 → UI Designer produces screen specs and user flows
-  12. architecture           → Technical Architect produces system design
-  13. spec                   → Spec-Driven Dev locks API contracts, schemas, and acceptance specs
-  14. tech-lead              → Tech Lead reviews and breaks down the work
-  15. backend                → Backend Engineer plans implementation
-  16. frontend               → Frontend Engineer plans implementation
-  17. qa                     → QA Engineer writes the test plan
-  18. marketing              → Product Marketer prepares launch messaging
-  19. exec-update            → CPO / Director PM produces the stakeholder update
-  20. retro                  → PM / Tech Lead retrospective + next discovery questions
+  7.  mvp-scope              → PM scopes MVP 1 / 2 / 3 with explicit gates to advance
+  8.  experiment             → PM designs the validation experiment (scoped to MVP 1)
+  9.  assumption-test        → PM specs the smallest test before committing to A/B
+  10. data-science           → Data Scientist defines measurement and instrumentation plan
+  11. analytics              → Analytics Expert validates metrics are measurable
+  12. design                 → UI Designer produces screen specs and user flows
+  13. architecture           → Technical Architect produces system design
+  14. spec                   → Spec-Driven Dev locks API contracts, schemas, and acceptance specs
+  15. tech-lead              → Tech Lead reviews and breaks down the work
+  16. agile-stories          → PM writes sprint-ready epics and stories from MVP scope + spec
+  17. backend                → Backend Engineer plans implementation
+  18. frontend               → Frontend Engineer plans implementation
+  19. qa                     → QA Engineer writes the test plan
+  20. marketing              → Product Marketer prepares launch messaging
+  21. exec-update            → CPO / Director PM produces the stakeholder update
+  22. retro                  → PM / Tech Lead retrospective + next discovery questions
 
-Quality gates: ux-research, opportunity-solution-tree, prd, experiment, analytics, spec
+Quality gates: ux-research, opportunity-solution-tree, prd, mvp-scope, experiment, analytics, spec, agile-stories
   — each stage is critiqued against a rubric; if it fails, re-run with critique injected (max 2 retries)
 
 Continuity check: after a full run, verifies the KPI chain holds from strategy → retro
@@ -58,6 +60,7 @@ ALL_STAGES = [
     "opportunity-solution-tree",
     "prd",
     "devil-advocate",
+    "mvp-scope",
     "experiment",
     "assumption-test",
     "data-science",
@@ -66,6 +69,7 @@ ALL_STAGES = [
     "architecture",
     "spec",
     "tech-lead",
+    "agile-stories",
     "backend",
     "frontend",
     "qa",
@@ -81,6 +85,7 @@ STAGE_LABELS = {
     "opportunity-solution-tree": "PM — Opportunity Solution Tree",
     "prd": "PM — Product Requirements",
     "devil-advocate": "PM Challenger — Devil's Advocate Review",
+    "mvp-scope": "PM — MVP Scope (v1 / v2 / v3)",
     "experiment": "PM — Experiment Design",
     "assumption-test": "PM — Assumption Test Spec",
     "data-science": "Data Scientist — Measurement Plan",
@@ -89,6 +94,7 @@ STAGE_LABELS = {
     "architecture": "Technical Architect — System Design",
     "spec": "Spec-Driven Dev — API Contracts & Acceptance Specs",
     "tech-lead": "Tech Lead — Implementation Review",
+    "agile-stories": "PM — Epics & Sprint-Ready Stories",
     "backend": "Backend Engineer — Implementation Plan",
     "frontend": "Frontend Engineer — Implementation Plan",
     "qa": "QA Engineer — Test Plan",
@@ -356,9 +362,105 @@ Before proceeding to experiment, the PRD author must respond to each challenge:
 [What's well-reasoned or well-evidenced in the PRD. This builds credibility.
 The challenge is only useful if the things being challenged are actually weak.]""",
 
+    "mvp-scope": """You are a senior PM making the hardest decision in product: what to ship first.
+
+You have a full PRD and a devil's advocate review that has challenged the riskiest assumptions.
+Now scope the MVP phases. MVP 1 must be the smallest thing that validates the core product
+hypothesis — not the full vision. Every feature added to MVP 1 delays learning.
+
+CRITICAL RULE: Reference specific requirement IDs from the PRD (e.g., M-01, S-03) in every
+inclusion and exclusion list. Never refer to features by name alone — tie everything to the PRD.
+
+CRITICAL RULE: Every phase must have a success gate with a specific measurable threshold
+(not "when it feels right" or "when adoption is good"). The threshold determines whether
+the team builds MVP 2.
+
+# MVP Scope: [Product Name]
+
+**Date**: [today]
+**Core hypothesis under test**: [The single assumption that, if true, justifies building this product]
+
+---
+
+## MVP 1 — Hypothesis Validation
+
+**Goal**: Prove [specific assumption] with real users in production.
+**Estimated timeline**: [X weeks with Y engineers]
+**Estimated scope**: [N story points — reference tech lead estimate if available]
+
+### Included in MVP 1
+| Req ID | Requirement | Why it must be in MVP 1 |
+|--------|-------------|------------------------|
+| M-XX | [requirement] | [Without this, we cannot test the core hypothesis] |
+
+### Explicitly Excluded from MVP 1
+| Req ID | Requirement | Why deferred | Phase |
+|--------|-------------|-------------|-------|
+| M-XX | [requirement] | [Requires data MVP 1 will generate / orthogonal to hypothesis] | MVP 2 |
+
+### Success Gate: Advance to MVP 2 when...
+| Metric | Threshold | Window | Measured how |
+|--------|-----------|--------|-------------|
+| [metric] | [specific number] | [30/60/90 days] | [method] |
+
+### Risk if We Stop at MVP 1
+[What commercial and product value MVP 1 alone delivers — and what's permanently missing]
+
+---
+
+## MVP 2 — Value Expansion
+
+**Unlocked by**: [What MVP 1 must have proven before this is worth building]
+**Goal**: [Additional hypothesis tested or user value added]
+**Estimated timeline**: [X weeks after MVP 1 gate is cleared]
+
+### Included in MVP 2
+| Req ID | Requirement | Why it belongs here (not MVP 1) |
+|--------|-------------|--------------------------------|
+| M-XX | [requirement] | [Depends on data/infrastructure from MVP 1] |
+
+### Success Gate: Advance to MVP 3 when...
+| Metric | Threshold | Window |
+|--------|-----------|--------|
+| [metric] | [threshold] | [window] |
+
+---
+
+## MVP 3 — Full Vision
+
+**Unlocked by**: [What MVP 2 must have proven]
+**Goal**: [Complete product capability — what the full PRD describes]
+
+### Included in MVP 3
+| Req ID | Requirement |
+|--------|-------------|
+| [remaining requirements] | |
+
+### What We'll Know by This Point
+[Why MVP 3 is low-risk — what validated assumptions from v1 and v2 de-risk it]
+
+---
+
+## Phase Summary
+
+| Phase | Focus | Key requirements | Gate to advance | Est. timeline |
+|-------|-------|-----------------|----------------|--------------|
+| MVP 1 | Hypothesis validation | [req IDs] | [threshold] | [weeks] |
+| MVP 2 | Value expansion | [req IDs] | [threshold] | [weeks] |
+| MVP 3 | Full vision | [req IDs] | Commercial traction | [weeks] |
+
+---
+
+## Experiment Scope Note
+
+The experiment and assumption-test stages should be scoped to **MVP 1 only**.
+Primary metric for the experiment: [the MVP 1 success gate metric]
+What MVP 2+ features are NOT included in the experiment treatment.""",
+
     "experiment": """You are a senior PM designing a product experiment.
 
-Given a PRD and devil's advocate review, produce a focused experiment design.
+Given a PRD, devil's advocate review, and MVP scope, produce a focused experiment design
+scoped to MVP 1 only. The MVP scope stage defines what's being tested — do not expand beyond it.
 If the devil's advocate raised concerns that affect the experiment hypothesis, address them.
 
 # Experiment Design: [Feature]
@@ -758,6 +860,93 @@ Format each as: "**[Decision]**: [Concern] → [What I'd do instead and why]"]
 |------|---------|-----------|-------|
 | [technical risk] | P0/P1/P2 | [specific mitigation] | [team] |""",
 
+    "agile-stories": """You are a senior PM writing sprint-ready agile artifacts.
+
+You have the MVP scope (which phase we're building), the spec's Given/When/Then acceptance
+criteria, and the tech lead's work breakdown. Do NOT re-derive requirements from the PRD.
+Do NOT re-derive acceptance criteria — pull them directly from the spec stage's Gherkin scenarios.
+Translate what's already been defined into sprint-ready stories an engineer can pick up immediately.
+
+CRITICAL RULE — Story sizing: No story may exceed 8 points. If a story would be 13+, split it.
+Show your reasoning when a story is 5 or 8 points.
+
+CRITICAL RULE — Acceptance criteria: Every story's AC must reference the Given/When/Then
+scenario from the spec by scenario title or quote the Gherkin directly. No AC invented here.
+
+# Backlog: [Product] — [MVP Phase]
+
+**Date**: [today]
+**Sprint length**: 2 weeks
+**Team velocity**: [X points/sprint — infer from tech lead estimate or state assumption]
+**MVP phase**: [Phase name and goal from mvp-scope]
+
+---
+
+## Epics
+
+For each major capability area in the MVP phase:
+
+### Epic [N]: [Epic Name]
+**Goal**: [One sentence — what user capability does this unlock?]
+**PRD requirements covered**: [List req IDs from PRD: M-01, S-02, etc.]
+**Out of scope for this epic**: [What's explicitly NOT included — prevents scope creep]
+
+---
+
+## Stories
+
+For each story, use this format:
+
+---
+
+### [EPIC-N-S] [Story Title]
+
+**As a** [user type]
+**I want** [specific action]
+**So that** [concrete outcome]
+
+| Field | Value |
+|-------|-------|
+| **Points** | [1 / 2 / 3 / 5 / 8] |
+| **Priority** | P0 / P1 / P2 |
+| **Epic** | [Epic name] |
+| **Dependencies** | [Story IDs that must complete first, or "none"] |
+| **Owner** | Backend / Frontend / Fullstack |
+
+**Acceptance Criteria** (from spec):
+```gherkin
+[Paste or reference the Given/When/Then scenario from the spec stage]
+```
+
+**Definition of Done**:
+- [ ] All AC scenarios pass
+- [ ] Unit + integration tests written and passing
+- [ ] Analytics event fires correctly (reference event name from analytics stage)
+- [ ] Code reviewed and merged to main
+
+**Engineering notes**: [Relevant detail from tech lead brief — specific to this story only]
+
+---
+
+[Repeat for all stories in scope]
+
+---
+
+## Sprint Plan
+
+| Sprint | Stories | Points | Theme |
+|--------|---------|--------|-------|
+| Sprint 1 | [story IDs] | [N pts] | [Foundation / integration / UI] |
+| Sprint 2 | [story IDs] | [N pts] | [Core mechanic / data / polish] |
+
+**Assumptions**: [Sprint velocity used, any scope risks flagged]
+
+## Stories Deferred to MVP 2
+
+| Story | Why deferred | MVP 2 epic it belongs to |
+|-------|-------------|-------------------------|
+| [story title] | [Depends on data from MVP 1 / Out of MVP 1 scope] | [Epic name] |""",
+
     "backend": """You are a senior backend engineer given a ticket and tech lead brief.
 
 Produce a focused backend plan:
@@ -1054,6 +1243,12 @@ QUALITY_GATES = {
         "Does every open question have a named owner (role), target date, and consequence if unresolved?",
         "Is there at least one guardrail metric — a metric that must not degrade?",
     ],
+    "mvp-scope": [
+        "Does every included/excluded requirement reference a specific PRD requirement ID (e.g., M-01)?",
+        "Does every MVP phase have a success gate with a specific measurable threshold (not qualitative)?",
+        "Is MVP 1 estimated at 8 weeks or fewer?",
+        "Does the excluded list for MVP 1 specify which phase (MVP 2 or 3) each requirement moves to?",
+    ],
     "experiment": [
         "Is the MDE (minimum detectable effect) stated as a specific number with rationale?",
         "Is the required sample size shown with a calculation (not just estimated)?",
@@ -1065,6 +1260,12 @@ QUALITY_GATES = {
         "Do all ❌ UNMEASURABLE flags include a specific fix action (not just 'needs work')?",
         "Does every event spec state which platforms it must fire on?",
         "Is there a pre-launch checklist with at least 3 specific, assignable items?",
+    ],
+    "agile-stories": [
+        "Does every story have acceptance criteria referencing Given/When/Then from the spec (not invented)?",
+        "Are all stories 8 points or fewer (no 13+ point stories)?",
+        "Do the stories collectively cover all MVP 1 Must Have requirements from the PRD?",
+        "Does the sprint plan include total points per sprint and does it not exceed stated velocity?",
     ],
     "spec": [
         "Does the OpenAPI spec cover all endpoints implied by the architecture doc?",
@@ -1123,6 +1324,7 @@ SUMMARIZE_WHEN_DOWNSTREAM = {
     "ux-research",
     "opportunity-solution-tree",
     "devil-advocate",
+    "mvp-scope",
     "assumption-test",
     "experiment",
     "design",
@@ -1278,20 +1480,22 @@ def build_input(
         "opportunity-solution-tree": ["strategy", "discovery", "ux-research"],
         "prd": ["strategy", "ux-research", "opportunity-solution-tree"],
         "devil-advocate": ["prd"],
-        "experiment": ["prd", "devil-advocate"],
-        "assumption-test": ["prd", "experiment"],
-        "data-science": ["prd", "experiment", "assumption-test"],
-        "analytics": ["prd", "data-science"],
-        "design": ["prd", "ux-research"],
-        "architecture": ["prd", "design"],
-        "spec": ["prd", "architecture"],
-        "tech-lead": ["prd", "architecture", "spec"],
-        "backend": ["prd", "architecture", "spec", "tech-lead"],
-        "frontend": ["prd", "design", "architecture", "spec", "tech-lead"],
-        "qa": ["prd", "spec", "backend", "frontend", "tech-lead"],
-        "marketing": ["strategy", "prd", "design"],
-        "exec-update": ["strategy", "prd", "experiment", "data-science", "architecture", "tech-lead", "marketing"],
-        "retro": ["strategy", "prd", "exec-update"],
+        "mvp-scope": ["prd", "devil-advocate"],
+        "experiment": ["prd", "devil-advocate", "mvp-scope"],
+        "assumption-test": ["prd", "mvp-scope", "experiment"],
+        "data-science": ["prd", "mvp-scope", "experiment", "assumption-test"],
+        "analytics": ["prd", "mvp-scope", "data-science"],
+        "design": ["prd", "ux-research", "mvp-scope"],
+        "architecture": ["prd", "design", "mvp-scope"],
+        "spec": ["prd", "mvp-scope", "architecture"],
+        "tech-lead": ["prd", "mvp-scope", "architecture", "spec"],
+        "agile-stories": ["prd", "mvp-scope", "spec", "tech-lead"],
+        "backend": ["prd", "mvp-scope", "architecture", "spec", "tech-lead"],
+        "frontend": ["prd", "mvp-scope", "design", "architecture", "spec", "tech-lead"],
+        "qa": ["prd", "mvp-scope", "spec", "agile-stories", "tech-lead"],
+        "marketing": ["strategy", "prd", "mvp-scope", "design"],
+        "exec-update": ["strategy", "prd", "mvp-scope", "experiment", "data-science", "architecture", "tech-lead", "marketing"],
+        "retro": ["strategy", "prd", "mvp-scope", "exec-update"],
     }
 
     prior = context_stages.get(stage, [])
