@@ -10,7 +10,7 @@ Run these for end-to-end workflows — they call each specialist in sequence, pa
 
 | Agent | What It Does |
 |-------|-------------|
-| [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 22 stages from strategy through continuous discovery (OST, devil's advocate, MVP scoping), analytics validation, agile story generation, quality-gated build stages, and retro with next-discovery feedback loop |
+| [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 24 stages from strategy through continuous discovery (OST, devil's advocate, MVP scoping), security threat modeling, analytics validation, agile story generation, launch readiness assessment, and retro with next-discovery feedback loop |
 | [pm-agent](pm_agent.py) | **PM workflow** — discovery → PRD → stories → experiment → stakeholder update |
 | [eng-team](eng_team.py) | **Engineering team** — tech lead → backend → frontend → QA |
 
@@ -18,30 +18,32 @@ Run these for end-to-end workflows — they call each specialist in sequence, pa
 
 ```
 Strategy (CPO)
-    └── Discovery (PM)  ←────────────────────────────────────────────────────────────┐
-            └── UX Research                                                           │
-                    └── Opportunity Solution Tree (OST)                               │
-                            └── PRD (PM)                                              │
-                                    └── Devil's Advocate Review                       │
-                                            └── MVP Scope (v1 / v2 / v3)  ◄── gate  │
-                                                    └── Experiment Design             │
-                                                            └── Assumption Test       │
-                                                                    └── Data Science  │
-                                                                            └── Analytics
+    └── Discovery (PM)  ←─────────────────────────────────────────────────────────────────────┐
+            └── UX Research                                                                    │
+                    └── Opportunity Solution Tree (OST)                                        │
+                            └── PRD (PM)                                                       │
+                                    └── Devil's Advocate Review                                │
+                                            └── MVP Scope (v1 / v2 / v3)  ◄── gate           │
+                                                    └── Experiment Design                      │
+                                                            └── Assumption Test                │
+                                                                    └── Data Science           │
+                                                                            └── Analytics      │
                                                                                     └── Design Spec
                                                                                             └── Architecture
-                                                                                                    └── Spec
-                                                                                                            └── Tech Lead
-                                                                                                                    └── Agile Stories (epics + sprint backlog)
-                                                                                                                            ├── Backend
-                                                                                                                            ├── Frontend
-                                                                                                                            └── QA
-                                                                                                                                    └── Marketing
-                                                                                                                                            └── Exec Update
-                                                                                                                                                    └── Retro → Next Discovery Questions ──┘
+                                                                                                    └── Security Review  ◄── gate
+                                                                                                            └── Spec
+                                                                                                                    └── Tech Lead
+                                                                                                                            └── Agile Stories (epics + sprint backlog)
+                                                                                                                                    ├── Backend
+                                                                                                                                    ├── Frontend
+                                                                                                                                    └── QA
+                                                                                                                                            └── Launch Readiness  ◄── gate
+                                                                                                                                                    └── Marketing
+                                                                                                                                                            └── Exec Update
+                                                                                                                                                                    └── Retro → Next Discovery Questions ──┘
 ```
 
-**Quality gates** (auto-retry up to 2×): `ux-research`, `opportunity-solution-tree`, `prd`, `mvp-scope`, `experiment`, `analytics`, `spec`, `agile-stories`
+**Quality gates** (auto-retry up to 2×): `ux-research`, `opportunity-solution-tree`, `prd`, `mvp-scope`, `experiment`, `analytics`, `security-review`, `spec`, `agile-stories`, `launch-readiness`
 
 **Post-run**: cross-stage continuity check + assumption register printed after every full run
 
@@ -89,6 +91,9 @@ python pdlc_orchestrator.py --goal "..." --output-dir ./digest/ --stages discove
 | [research-synthesis](research_synthesis.py) | Themes and opportunities from interviews | — |
 | [sprint-reporter](sprint_reporter.py) | Sprint status updates | team / exec / stakeholder |
 | [competitive-intel](competitive_intel.py) | Competitive briefing from updates | — |
+| [roadmap](roadmap.py) | Quarterly roadmaps, Now/Next/Later views, scenario modeling | quarterly / now-next-later / scenario / all |
+| [pricing-packager](pricing_packager.py) | Tier design, feature gating matrices, competitive pricing, packaging scenarios | tiers / gating / competitive / scenario / all |
+| [interview-analyst](interview_analyst.py) | Theme extraction, JTBD maps, OST input, personas from raw interview notes | themes / jtbd / ost / personas / all |
 
 ---
 
@@ -184,4 +189,9 @@ python cpo_agent.py --file strategy.md --mode portfolio
 python eng_director_agent.py --situation "three teams blocked on shared infra" --mode dependencies
 python cto_agent.py --context "evaluating whether to build our own ML pipeline" --mode build-buy
 python director_pm_agent.py --situation "two PMs competing for same eng capacity" --mode prioritization
+
+# New agents
+python roadmap.py --brief "Pulse Q3 roadmap for manager digest and onboarding" --mode quarterly --quarters 2
+python pricing_packager.py --file prd.md --mode tiers
+python interview_analyst.py --file ./interviews/ --mode all --participants 8
 ```

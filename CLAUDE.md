@@ -8,50 +8,47 @@ This file provides Claude with persistent context about your product, team, and 
 
 ## Your Product
 
-**Product name**: [e.g. Pulse]  
-**One-line description**: [e.g. B2B team analytics platform for engineering managers]  
-**Stage**: [e.g. Series B / Growth / Enterprise]  
-**Primary metric**: [e.g. Weekly Active Users (WAU)]  
+**Product name**: Pulse  
+**One-line description**: B2B team analytics platform that gives engineering managers insight into team health, delivery velocity, and sprint predictability — without the spreadsheets.  
+**Stage**: Series B  
+**Primary metric**: WAU of managers who open and act on the weekly digest (digest-active WAU)  
 
 **Ideal customer profile (ICP)**:  
-[e.g. Engineering managers at mid-market B2B SaaS companies (100–500 engineers), using Jira + Slack + GitHub]
+Engineering managers at mid-market B2B SaaS companies (200–2000 employees) who own a team of 8–30 engineers, use Jira + GitHub + Slack as their primary toolchain, and are accountable for delivery predictability and team health. Not HR. Not executives. The manager in the stand-up.
 
 **Top 3 differentiators**:  
-1. [e.g. Fastest time-to-value — live in 3 days, not 6 weeks]
-2. [e.g. Built for frontline managers, not HR or executives]
-3. [e.g. Actionable recommendations, not just dashboards]
+1. Manager-first — built for the person running the team, not for HR dashboards or exec roll-ups
+2. Actionable recommendations, not just metrics — Pulse tells you what to do, not just what happened
+3. Live in 3 days, not 3 months — no professional services, no lengthy implementation, just connect your tools and go
 
 **Known weaknesses / honest gaps**:  
-[e.g. Fewer integrations than Teamlytics; no mobile app; no SCIM provisioning yet]
+No mobile app; fewer Jira configuration variants supported than Linearb (custom workflows are a gap); no org-level rollup — Pulse is team-scoped only, so multi-team directors need to context-switch between views
 
 ---
 
 ## Current Quarter Goals (OKRs)
 
-**Quarter**: [e.g. Q3 2026]
+**Quarter**: Q2 2026
 
-**Objective 1**: [e.g. Make Pulse a habit managers return to weekly]  
-- KR1: [e.g. WAU 32% → 42%]
-- KR2: [e.g. Manager login frequency 1.8x → 3.5x/week]
+**Objective 1**: Make Pulse the habit engineering managers return to every week  
+- KR1: Digest-active WAU 38% → 52%
+- KR2: Weekly digest open rate 61% → 75%
 
-**Objective 2**: [e.g. Turn new users into confident Pulse users in 30 days]  
-- KR1: [e.g. Onboarding completion 38% → 65%]
-- KR2: [e.g. Time-to-first-insight 8 days → 3 days]
-
-**Objective 3**: [e.g. Keep the customers we've earned]  
-- KR1: [e.g. 90-day retention 71% → 78%]
+**Objective 2**: Nail onboarding — get managers to their first insight fast  
+- KR1: Time-to-first-insight 8 days → 3 days
+- KR2: 30-day retention 64% → 78%
 
 ---
 
 ## Team
 
-**PM**: [Your name]  
-**Eng lead**: [Name]  
-**Design lead**: [Name]  
-**Data / analytics**: [Name]  
-**CS lead**: [Name]  
-**Sprint length**: [e.g. 2 weeks]  
-**Team velocity**: [e.g. ~11 story points/sprint]  
+**PM**: Jordan  
+**Eng lead**: Sam  
+**Design lead**: Priya  
+**Data / analytics**: Alex  
+**CS lead**: Morgan  
+**Sprint length**: 2 weeks  
+**Team velocity**: ~18 story points/sprint  
 
 ---
 
@@ -59,20 +56,21 @@ This file provides Claude with persistent context about your product, team, and 
 
 | Competitor | Threat | Their Pitch | Our Counter |
 |------------|--------|-------------|-------------|
-| [e.g. Teamlytics] | High | [e.g. All-in-one people analytics] | [e.g. Faster, built for managers] |
-| [e.g. DataTeam] | Medium | [e.g. GitHub-native insights] | [e.g. Broader data sources, better UX] |
+| Linearb | High | Git analytics for engineering teams — merge times, cycle time, PR review lag | We're manager-first; they're metrics-first. Pulse tells you what to do with the data, Linearb just shows it. |
+| Swarmia | Medium | Flow metrics and team health for engineering orgs | Better recommendations and faster setup; Swarmia still requires a data analyst to interpret the output. |
+| Allstacks | Low | Executive-level engineering reporting and roadmap forecasting | We serve managers, not execs. Allstacks is a top-down tool; Pulse is bottom-up and actionable. |
 
 ---
 
 ## Data & Tools
 
-**Analytics database**: [e.g. Snowflake]  
-**Key tables**: [e.g. `events`, `users`, `accounts`, `digest_sends`]  
-**Log platform**: [e.g. Splunk]  
-**Dashboard tool**: [e.g. QuickSight]  
-**Project tracker**: [e.g. Jira — project key: PULSE]  
-**Docs**: [e.g. Confluence — space: PROD]  
-**Comms**: [e.g. Slack — main channel: #product]  
+**Analytics database**: Snowflake  
+**Key tables**: `events`, `users`, `accounts`, `digest_sends`, `sprint_data`  
+**Log platform**: CloudWatch  
+**Dashboard tool**: QuickSight  
+**Project tracker**: Jira — project key: PULSE  
+**Docs**: Confluence — space: PROD  
+**Comms**: Slack — main channel: #product  
 
 ---
 
@@ -91,22 +89,23 @@ This file provides Claude with persistent context about your product, team, and 
 
 ## Communication Preferences
 
-**Status update cadence**: [e.g. Weekly, Mondays]  
-**Exec update audience**: [e.g. VP Product, CFO, CEO]  
-**Stakeholder Slack channels**: [e.g. #product-updates, #exec-updates]  
-**Release notes go to**: [e.g. Intercom + internal Confluence page]  
+**Status update cadence**: Weekly, Mondays  
+**Exec update audience**: VP Product, CFO, CEO  
+**Stakeholder Slack channels**: #product-updates, #exec-updates  
+**Release notes go to**: Intercom (customer-facing) + internal Confluence page (PROD space)  
 
 ---
 
 ## Terminology
 
-Add any company-specific terms, acronyms, or jargon Claude should know:
-
 | Term | Meaning |
 |------|---------|
-| [e.g. "the digest"] | [e.g. The weekly email summary feature] |
-| [e.g. "ICP account"] | [e.g. An account matching our ideal customer profile] |
-| [e.g. "TTV"] | [e.g. Time-to-value — how long until a new user sees their first insight] |
+| "the digest" | The weekly email summary sent to managers every Monday morning — our primary engagement surface and core product loop |
+| "ICP account" | An account where the manager owns a team of 8–30 engineers on Jira + GitHub + Slack |
+| "TTV" | Time-to-value — how long from sign-up until a manager sees their first meaningful insight in Pulse |
+| "manager health score" | Composite metric combining digest open rate, insight click-through, and recommendation action rate for a given manager |
+| "digest-active WAU" | Weekly active users who opened and interacted with that week's digest — our primary north star metric |
+| "sprint predictability" | The ratio of committed story points delivered vs. planned across the last 4 sprints — a key metric Pulse surfaces |
 
 ---
 
@@ -114,7 +113,7 @@ Add any company-specific terms, acronyms, or jargon Claude should know:
 
 Override default behavior for specific skills:
 
-- **monte-carlo**: Default confidence target = 80%
+- **monte-carlo**: Default confidence target = 85%
 - **agile-stories**: Default pointing scale = Fibonacci (see table above)
 - **release-notes**: Default primary audience = end users first, then internal
 - **okrs**: Company OKRs cascade (add above) — check team KRs for alignment

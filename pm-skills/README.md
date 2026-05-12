@@ -34,6 +34,9 @@ A complete collection of Claude skills tailored for product management workflows
 | `analytics` | Define, validate, and audit product analytics instrumentation — event specs, SQL queries, metric dictionaries | "what events should we track", "is this metric measurable", "validate our instrumentation", "write a query for", "our numbers look wrong" |
 | `continuous-discovery` | Opportunity solution trees, weekly interview cadence, assumption testing, retro-to-discovery feedback loop | "build an OST", "opportunity solution tree", "assumption test", "smallest test for", "next discovery questions", "continuous discovery" |
 | `agile-stories` | Sprint-ready epics, user stories with Given/When/Then AC, story points, sprint plans | "write stories for", "break into tickets", "create the backlog", "write AC for", "sprint plan for MVP 1", "estimate these stories" |
+| `roadmap` | Quarterly roadmaps, Now/Next/Later views, scenario modeling (what if we delay X?) | "build a roadmap", "roadmap for Q3", "sequence these features", "what if we delay", "capacity planning" |
+| `pricing-packaging` | Tier design, feature gating matrix, competitive pricing, packaging scenarios | "design our pricing tiers", "should this be in the base plan", "pricing analysis for", "feature gating matrix" |
+| `interview-analysis` | Theme extraction, JTBD maps, OST input, personas from raw interview notes | "synthesize these interviews", "find themes in this research", "JTBD from these notes", "build personas from" |
 
 ## How to Install
 
