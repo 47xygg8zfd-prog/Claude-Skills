@@ -10,15 +10,19 @@ agents (pm_agent.py, eng_team.py, etc.) for single-stage work.
 PDLC Stages:
   1. strategy      → CPO frames strategic fit and investment case
   2. discovery     → PM frames the problem, hypotheses, and open questions
-  3. prd           → PM drafts the requirements document
-  4. experiment    → PM designs the validation experiment
-  5. design        → UI Designer produces screen specs and user flows
-  6. architecture  → Technical Architect produces system design
-  7. tech-lead     → Tech Lead reviews and breaks down the work
-  8. backend       → Backend Engineer plans implementation
-  9. frontend      → Frontend Engineer plans implementation
-  10. qa           → QA Engineer writes the test plan
-  11. exec-update  → CPO / Director PM produces the stakeholder update
+  3. ux-research   → UX Researcher synthesizes user needs and pain points
+  4. prd           → PM drafts the requirements document
+  5. experiment    → PM designs the validation experiment
+  6. data-science  → Data Scientist defines measurement and instrumentation plan
+  7. design        → UI Designer produces screen specs and user flows
+  8. architecture  → Technical Architect produces system design
+  9. spec          → Spec-Driven Dev locks API contracts, schemas, and acceptance specs
+  10. tech-lead    → Tech Lead reviews and breaks down the work
+  11. backend      → Backend Engineer plans implementation
+  12. frontend     → Frontend Engineer plans implementation
+  13. qa           → QA Engineer writes the test plan
+  14. marketing    → Product Marketer prepares launch messaging
+  15. exec-update  → CPO / Director PM produces the stakeholder update
 
 Usage:
     python pdlc_orchestrator.py --goal "add a weekly email digest for engineering managers"
@@ -43,6 +47,7 @@ ALL_STAGES = [
     "data-science",
     "design",
     "architecture",
+    "spec",
     "tech-lead",
     "backend",
     "frontend",
@@ -60,6 +65,7 @@ STAGE_LABELS = {
     "data-science": "Data Scientist — Measurement Plan",
     "design": "UI Designer — Design Spec",
     "architecture": "Technical Architect — System Design",
+    "spec": "Spec-Driven Dev — API Contracts & Acceptance Specs",
     "tech-lead": "Tech Lead — Implementation Review",
     "backend": "Backend Engineer — Implementation Plan",
     "frontend": "Frontend Engineer — Implementation Plan",
@@ -340,6 +346,84 @@ Key tables / collections with primary fields and indexes.
 ## Open Technical Questions
 1. [Question needing engineering input]""",
 
+    "spec": """You are a principal engineer locking formal specifications before any code is written.
+
+Given the PRD and architecture doc, produce the three most critical spec artifacts:
+1. OpenAPI contracts for all new/modified endpoints
+2. JSON Schemas for all new data objects
+3. Given/When/Then acceptance specs for all user stories
+
+# Spec Suite: [Feature]
+
+**Date**: [today]
+**Status**: Draft — requires sign-off from backend, frontend, and QA before sprint start
+
+---
+
+## OpenAPI Contracts
+
+```yaml
+openapi: 3.0.3
+info:
+  title: [Feature] API
+  version: 1.0.0
+
+paths:
+  [every new or modified endpoint — method, request, response, errors]
+
+components:
+  schemas:
+    [every named schema — no inline objects]
+```
+
+**Design decisions**:
+- [Auth approach and why]
+- [Any non-obvious choice — pagination, versioning, error shape]
+
+---
+
+## JSON Schemas
+
+For each new data object:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "[ObjectName]",
+  "type": "object",
+  "required": ["..."],
+  "properties": { [with types, descriptions, and examples] }
+}
+```
+
+---
+
+## Acceptance Specs (Given/When/Then)
+
+For each user story from the PRD:
+
+```gherkin
+Feature: [Feature Name]
+
+  @happy-path @p0
+  Scenario: [descriptive title]
+    Given [precondition]
+    When [single action]
+    Then [observable result]
+
+  @error-path @p0
+  Scenario: [error scenario]
+    ...
+```
+
+---
+
+## Open Decisions (block the sprint until resolved)
+
+| Decision | Options | Owner | Target date |
+|----------|---------|-------|------------|
+| [decision] | [option A / option B] | [team] | [date] |""",
+
     "tech-lead": """You are a staff tech lead reviewing an architecture and planning the engineering breakdown.
 
 Given architecture and PRD context, produce a tech lead brief:
@@ -606,10 +690,11 @@ def build_input(stage: str, goal: str, outputs: dict[str, str]) -> str:
         "data-science": ["prd", "experiment"],
         "design": ["prd", "ux-research"],
         "architecture": ["prd", "design"],
-        "tech-lead": ["prd", "architecture"],
-        "backend": ["prd", "architecture", "tech-lead"],
-        "frontend": ["prd", "design", "architecture", "tech-lead"],
-        "qa": ["prd", "backend", "frontend", "tech-lead"],
+        "spec": ["prd", "architecture"],
+        "tech-lead": ["prd", "architecture", "spec"],
+        "backend": ["prd", "architecture", "spec", "tech-lead"],
+        "frontend": ["prd", "design", "architecture", "spec", "tech-lead"],
+        "qa": ["prd", "spec", "backend", "frontend", "tech-lead"],
         "marketing": ["strategy", "prd", "design"],
         "exec-update": ["strategy", "prd", "experiment", "data-science", "architecture", "marketing"],
     }

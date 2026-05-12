@@ -30,6 +30,7 @@ A complete collection of Claude skills tailored for product management workflows
 | `product-marketer` | Positioning frameworks, launch announcements, emails, blog posts, battlecards, social copy | "write the launch copy", "position this feature", "write the announcement for", "battlecard for..." |
 | `ux-researcher` | Research plans, discussion guides, synthesis reports, personas, journey maps, usability findings | "synthesize these interviews", "write a discussion guide", "map the user journey", "create a persona" |
 | `data-scientist` | Measurement plans, analysis plans, experiment results, ML scoping, data storytelling | "how should we measure this", "interpret these results", "is this significant", "scope a model for..." |
+| `spec-driven-dev` | OpenAPI specs, JSON schemas, interface contracts, Given/When/Then acceptance specs, mock payloads, test matrices | "write the API spec", "define the schema for", "write acceptance criteria as Given/When/Then", "generate a mock response", "what are the interfaces between services" |
 
 ## How to Install
 
