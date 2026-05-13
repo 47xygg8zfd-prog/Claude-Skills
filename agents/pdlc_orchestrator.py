@@ -5,7 +5,7 @@ framing through continuous discovery, design, architecture, implementation plann
 QA, stakeholder communication, and retrospective. Each stage passes its output to
 the next. Quality gates auto-retry weak outputs before moving on.
 
-PDLC Stages (22):
+PDLC Stages (24):
   1.  strategy               → CPO frames strategic fit and investment case
   2.  discovery              → PM frames the problem, hypotheses, and open questions
   3.  ux-research            → UX Researcher synthesizes user needs and pain points
@@ -19,17 +19,19 @@ PDLC Stages (22):
   11. analytics              → Analytics Expert validates metrics are measurable
   12. design                 → UI Designer produces screen specs and user flows
   13. architecture           → Technical Architect produces system design
-  14. spec                   → Spec-Driven Dev locks API contracts, schemas, and acceptance specs
-  15. tech-lead              → Tech Lead reviews and breaks down the work
-  16. agile-stories          → PM writes sprint-ready epics and stories from MVP scope + spec
-  17. backend                → Backend Engineer plans implementation
-  18. frontend               → Frontend Engineer plans implementation
-  19. qa                     → QA Engineer writes the test plan
-  20. marketing              → Product Marketer prepares launch messaging
-  21. exec-update            → CPO / Director PM produces the stakeholder update
-  22. retro                  → PM / Tech Lead retrospective + next discovery questions
+  14. security-review        → Security Engineer threat-models the architecture (OWASP)
+  15. spec                   → Spec-Driven Dev locks API contracts, schemas, and acceptance specs
+  16. tech-lead              → Tech Lead reviews and breaks down the work
+  17. agile-stories          → PM writes sprint-ready epics and stories from MVP scope + spec
+  18. backend                → Backend Engineer plans implementation
+  19. frontend               → Frontend Engineer plans implementation
+  20. qa                     → QA Engineer writes the test plan
+  21. launch-readiness       → PM / Eng verifies all systems are go before launch
+  22. marketing              → Product Marketer prepares launch messaging
+  23. exec-update            → CPO / Director PM produces the stakeholder update
+  24. retro                  → PM / Tech Lead retrospective + next discovery questions
 
-Quality gates: ux-research, opportunity-solution-tree, prd, mvp-scope, experiment, analytics, spec, agile-stories
+Quality gates: ux-research, opportunity-solution-tree, prd, mvp-scope, experiment, analytics, spec, agile-stories, security-review, launch-readiness
   — each stage is critiqued against a rubric; if it fails, re-run with critique injected (max 2 retries)
 
 Continuity check: after a full run, verifies the KPI chain holds from strategy → retro
@@ -67,12 +69,14 @@ ALL_STAGES = [
     "analytics",
     "design",
     "architecture",
+    "security-review",
     "spec",
     "tech-lead",
     "agile-stories",
     "backend",
     "frontend",
     "qa",
+    "launch-readiness",
     "marketing",
     "exec-update",
     "retro",
@@ -92,12 +96,14 @@ STAGE_LABELS = {
     "analytics": "Analytics Expert — Instrumentation Validation",
     "design": "UI Designer — Design Spec",
     "architecture": "Technical Architect — System Design",
+    "security-review": "Security Engineer — Threat Model & Security Requirements",
     "spec": "Spec-Driven Dev — API Contracts & Acceptance Specs",
     "tech-lead": "Tech Lead — Implementation Review",
     "agile-stories": "PM — Epics & Sprint-Ready Stories",
     "backend": "Backend Engineer — Implementation Plan",
     "frontend": "Frontend Engineer — Implementation Plan",
     "qa": "QA Engineer — Test Plan",
+    "launch-readiness": "PM / Eng Lead — Launch Readiness Assessment",
     "marketing": "Product Marketer — Launch Messaging",
     "exec-update": "CPO / Director PM — Stakeholder Update",
     "retro": "PM / Tech Lead — Sprint Retrospective & Next Iteration",
@@ -743,6 +749,173 @@ Key tables / collections with primary fields and indexes.
 ## Open Technical Questions
 1. [Question needing engineering input]""",
 
+    "security-review": """You are a senior application security engineer threat-modeling a new feature
+before specifications are written. Your job is to surface security risks while there is still
+time to address them in the spec — not in production.
+
+Work through the OWASP Top 10 systematically. For each risk that applies, state it concretely
+(not generically). A finding of "injection risk" is useless — "SQL injection via the runbook
+search query parameter if inputs are not parameterized" is actionable.
+
+# Security Review: [Feature]
+
+**Date**: [today]
+**Scope**: [Feature name — what's being threat-modeled]
+**Verdict**: SHIP WITH MITIGATIONS / HOLD — BLOCKING ISSUES / NO-GO — ARCHITECTURAL REWORK NEEDED
+
+---
+
+## Threat Model (STRIDE)
+
+For each applicable threat category, enumerate specific attack scenarios for this feature:
+
+| Threat | Attack scenario | Component at risk | Severity |
+|--------|----------------|------------------|---------|
+| **Spoofing** | [e.g., Attacker crafts forged webhook from PagerDuty] | [API receiver] | P0/P1/P2 |
+| **Tampering** | [e.g., User modifies runbook ID in API request to access another org's data] | [Runbook endpoint] | P0/P1/P2 |
+| **Repudiation** | [e.g., No audit log when a runbook is edited or deleted] | [Write operations] | P0/P1/P2 |
+| **Information Disclosure** | [e.g., Error messages expose internal table names or stack traces] | [Error handlers] | P0/P1/P2 |
+| **Denial of Service** | [e.g., Unthrottled embedding API calls could exhaust ML budget] | [Vector search] | P0/P1/P2 |
+| **Elevation of Privilege** | [e.g., Viewer-role user can write via direct API call bypassing UI checks] | [Auth middleware] | P0/P1/P2 |
+
+---
+
+## Authentication & Authorization
+
+- **Auth mechanism**: [JWT / OAuth2 / API key — and what's being protected]
+- **Who can read**: [roles / conditions]
+- **Who can write**: [roles / conditions]
+- **Multi-tenancy isolation**: [how data from one org is prevented from leaking to another]
+- **Missing checks**: [endpoints or operations where authz is unclear or absent]
+
+---
+
+## Data Classification
+
+| Data type | Sensitivity | Where stored | Encrypted at rest? | Encrypted in transit? |
+|-----------|------------|-------------|-------------------|----------------------|
+| [e.g., PagerDuty API token] | Critical | [Config table] | Must be: Yes | TLS required |
+| [e.g., Runbook content] | Internal | [Postgres] | Yes/No/TBD | TLS required |
+| [e.g., On-call schedule] | Internal | [Cache] | Yes/No/TBD | TLS required |
+
+---
+
+## API Security Requirements
+
+CRITICAL: These must appear verbatim in the spec as security requirements for each endpoint:
+
+| Endpoint | Requirement | Priority |
+|---------|------------|---------|
+| [POST /api/runbooks] | Validate org_id matches authenticated user's org before write | P0 |
+| [GET /api/runbooks/:id] | Return 404 (not 403) for unauthorized access to prevent enumeration | P0 |
+| [POST /api/webhooks] | Verify HMAC signature on all incoming webhook payloads | P0 |
+
+---
+
+## Security Requirements for the Spec
+
+List every security requirement the spec stage must include, with priority:
+
+**P0 — Blocking (must be in spec before any code is written)**:
+- [ ] [Requirement — specific enough to write a test for]
+- [ ] [Requirement]
+
+**P1 — High (must be resolved before launch)**:
+- [ ] [Requirement]
+
+**P2 — Moderate (post-MVP or low-risk)**:
+- [ ] [Requirement]
+
+---
+
+## Risk Summary
+
+| Finding | Severity | Effort to fix | Spec req ID to add |
+|---------|---------|--------------|-------------------|
+| [finding] | P0/P1/P2 | [< 1 day / 1 sprint / architectural] | [SR-01] |
+
+**Verdict rationale**: [One paragraph explaining the SHIP / HOLD / NO-GO decision and what
+must be true before this is safe to build.]""",
+
+    "launch-readiness": """You are a PM and engineering lead conducting a pre-launch readiness review.
+Your job is to produce an honest, binary assessment: is this feature ready to ship?
+
+"Ready" does not mean perfect. It means: the feature does what it claims, the data is being
+captured, on-call knows how to respond to incidents, and the rollback path is clear.
+If any P0 item is unresolved, the verdict is HOLD — no exceptions.
+
+# Launch Readiness: [Feature]
+
+**Date**: [today]
+**Target launch date**: [date from exec-update or spec]
+**Rollout plan**: [percentage / feature flag / cohort — from exec-update]
+**Verdict**: SHIP ✅ / HOLD 🟡 / NO-GO 🔴
+
+---
+
+## Technical Readiness
+
+| Check | Owner | Status | Blocker? |
+|-------|-------|--------|---------|
+| All P0 QA scenarios pass | QA | ✅/❌/⚠️ | Yes/No |
+| Security P0 requirements met (from security-review) | Eng | ✅/❌/⚠️ | Yes/No |
+| All analytics events fire in staging (from analytics stage) | Data | ✅/❌/⚠️ | Yes/No |
+| Feature flag / rollout mechanism tested | Eng | ✅/❌/⚠️ | Yes/No |
+| Rollback procedure documented and tested | Eng Lead | ✅/❌/⚠️ | Yes/No |
+| Database migrations are backward-compatible | Backend | ✅/❌/⚠️ | Yes/No |
+| Load test or capacity check done (if new infrastructure) | Eng | ✅/❌/⚠️ | Yes/No |
+| All P0 spec open decisions resolved | PM + Eng | ✅/❌/⚠️ | Yes/No |
+
+## Product Readiness
+
+| Check | Owner | Status | Blocker? |
+|-------|-------|--------|---------|
+| Success metrics have baselines captured | Data | ✅/❌/⚠️ | Yes/No |
+| Guardrail metric dashboards live and alerting | Data | ✅/❌/⚠️ | Yes/No |
+| MVP 1 success gate thresholds are documented | PM | ✅/❌/⚠️ | Yes/No |
+| User-facing copy reviewed (error messages, empty states, CTAs) | Design | ✅/❌/⚠️ | Yes/No |
+| Accessibility: keyboard nav and screen reader tested | Design/QA | ✅/❌/⚠️ | Yes/No |
+| Edge cases for empty/zero-data states handled | Frontend | ✅/❌/⚠️ | Yes/No |
+
+## Communications Readiness
+
+| Check | Owner | Status | Blocker? |
+|-------|-------|--------|---------|
+| In-app announcement copy approved | PM + Marketing | ✅/❌/⚠️ | Yes/No |
+| Customer-facing release notes written | PM | ✅/❌/⚠️ | Yes/No |
+| Support / CS team briefed with FAQ | CS Lead | ✅/❌/⚠️ | Yes/No |
+| Sales team briefed (if customer-facing feature) | Sales | ✅/❌/⚠️ | Yes/No |
+| Exec update sent (from exec-update stage) | PM | ✅/❌/⚠️ | Yes/No |
+
+---
+
+## Open Blockers
+
+List every ❌ item that blocks the launch verdict:
+
+| # | Blocker | Owner | Resolution | ETA |
+|---|---------|-------|-----------|-----|
+| 1 | [specific issue] | [owner] | [what must happen] | [date] |
+
+---
+
+## Post-Launch Monitoring Plan
+
+**First 24 hours**: Monitor [specific metrics] in [tool]. Alert threshold: [condition].
+**Rollback trigger**: [specific condition — e.g., "error rate > 2% on /api/runbooks for 10 min"]
+**Rollback steps**: [numbered, specific — not "revert the deploy"]
+**First week check-in**: [date] — review [metrics] against MVP 1 success gate thresholds.
+
+---
+
+## Verdict
+
+**SHIP ✅ / HOLD 🟡 / NO-GO 🔴**
+
+[One paragraph: if SHIP — what's being monitored and for how long. If HOLD — what
+specific items must close before re-assessing (with dates). If NO-GO — what architectural
+or product decision needs to change before this can proceed.]""",
+
     "spec": """You are a principal engineer locking formal specifications before any code is written.
 
 Given the PRD and architecture doc, produce the three most critical spec artifacts:
@@ -1273,6 +1446,18 @@ QUALITY_GATES = {
         "Are error-path scenarios present in the acceptance specs (not just happy path)?",
         "Are all schemas defined in components/schemas with no inline objects in paths?",
     ],
+    "security-review": [
+        "Does the STRIDE threat model cover at least 4 of the 6 categories with feature-specific scenarios (not generic)?",
+        "Are there at least 2 P0 security requirements with enough specificity to write a test for each?",
+        "Does the data classification table cover every sensitive data type handled by the feature?",
+        "Does the review include a clear SHIP / HOLD / NO-GO verdict with a rationale paragraph?",
+    ],
+    "launch-readiness": [
+        "Are all three readiness sections present (Technical, Product, Communications) with statuses?",
+        "Is every ❌ item listed in the Open Blockers table with an owner and ETA?",
+        "Does the post-launch monitoring plan include a specific rollback trigger condition (not generic)?",
+        "Is there a clear SHIP / HOLD / NO-GO verdict with a rationale paragraph?",
+    ],
 }
 
 SUMMARIZER_PROMPT = """Summarize the following PDLC stage output in 150 words or fewer.
@@ -1487,12 +1672,14 @@ def build_input(
         "analytics": ["prd", "mvp-scope", "data-science"],
         "design": ["prd", "ux-research", "mvp-scope"],
         "architecture": ["prd", "design", "mvp-scope"],
-        "spec": ["prd", "mvp-scope", "architecture"],
-        "tech-lead": ["prd", "mvp-scope", "architecture", "spec"],
+        "security-review": ["prd", "mvp-scope", "architecture"],
+        "spec": ["prd", "mvp-scope", "architecture", "security-review"],
+        "tech-lead": ["prd", "mvp-scope", "architecture", "security-review", "spec"],
         "agile-stories": ["prd", "mvp-scope", "spec", "tech-lead"],
         "backend": ["prd", "mvp-scope", "architecture", "spec", "tech-lead"],
         "frontend": ["prd", "mvp-scope", "design", "architecture", "spec", "tech-lead"],
         "qa": ["prd", "mvp-scope", "spec", "agile-stories", "tech-lead"],
+        "launch-readiness": ["prd", "mvp-scope", "security-review", "spec", "qa", "exec-update"],
         "marketing": ["strategy", "prd", "mvp-scope", "design"],
         "exec-update": ["strategy", "prd", "mvp-scope", "experiment", "data-science", "architecture", "tech-lead", "marketing"],
         "retro": ["strategy", "prd", "mvp-scope", "exec-update"],
