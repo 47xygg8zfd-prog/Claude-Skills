@@ -10,6 +10,15 @@ Swarmia is optimizing for engineering culture, not individual manager productivi
 
 ---
 
+## Key Metrics & What They Reveal
+
+- **North Star metric**: Flow efficiency — the percentage of engineering time spent on value-creating work (features and planned tech debt) versus unplanned work and interrupts, framed through the Project to Product framework.
+- **How you know**: The investment distribution view is the first dashboard users see post-onboarding, with flow efficiency as the composite score. The entire onboarding narrative is built around understanding how engineering time is "invested," not just consumed. Working agreements are explicitly tied to maintaining flow efficiency targets.
+- **Input metrics**: Unplanned work percentage, WIP levels, deployment frequency, PR review time, and working agreement adherence rates. These are the sub-metrics that teams actively track weekly to maintain flow efficiency targets.
+- **What this tells us**: Swarmia is betting that smart engineering teams care less about individual PR metrics and more about systemic efficiency — how much of their effort is going to the work that was planned versus reactive firefighting. They're optimizing for team health and predictability, not raw speed. This makes them well-positioned with CTOs who view engineering as a system, but it creates a literacy prerequisite that excludes managers who haven't internalized the flow framework.
+
+---
+
 ## Jobs to Be Done
 
 | Job type | The job | What users hired before | Why this product wins this job |

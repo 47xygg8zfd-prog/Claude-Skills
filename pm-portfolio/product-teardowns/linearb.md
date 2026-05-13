@@ -10,6 +10,15 @@ LinearB is optimizing for data density and engineering credibility. Every design
 
 ---
 
+## Key Metrics & What They Reveal
+
+- **North Star metric**: Cycle time — the time from issue creation to deploy, broken down into coding / pickup / review / deploy stages.
+- **How you know**: Every dashboard view leads with cycle time as the primary comparison axis; the entire product is scaffolded around decomposing and optimizing this single metric. The stage breakdown is the core visualization — it's not buried in a submenu, it's the homepage.
+- **Input metrics**: PR review turnaround time, time to pickup (how long a PR sits before review starts), rework rate, deployment frequency, and contributor-specific bottleneck identification. These are the sub-metrics the team is actively measuring daily to move the north star.
+- **What this tells us**: LinearB is betting that engineering managers care most about delivery speed and believe the path to faster delivery runs through process optimization. They're optimizing for operational efficiency, not business outcomes — they assume that if you fix the engineering process, the business results follow. This positioning leaves them vulnerable to competitors who can connect engineering metrics back to product outcomes or team health.
+
+---
+
 ## Jobs to Be Done
 
 | Job type | The job | What users hired before | Why this product wins this job |

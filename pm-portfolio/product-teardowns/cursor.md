@@ -10,6 +10,15 @@ Cursor is not optimizing for AI capability. It is optimizing for habit formation
 
 ---
 
+## Key Metrics & What They Reveal
+
+- **North Star metric**: 30-day active retention, specifically engineers who open Cursor at least 10+ times per week and have escalated beyond Tab completion to chat/Composer/Agent features
+- **How you know**: The growth loop is designed to move from Tab completion → CMD+K chat → Composer → Agent, with each escalation locking in the user deeper into a Cursor-shaped workflow. The "can't go back to VS Code" feeling is measurable as escalation cohort retention, not just raw DAU. Early churn is a feature discovery problem; later churn signals real dissatisfaction.
+- **Input metrics**: Likely measuring (1) Time-to-first-Tab-acceptance on day 1 (how long before a suggestion is accepted), (2) Escalation funnel — % of Tab users who try CMD+K within 30 days, % who try Composer within 60 days, (3) Code-completion accuracy (how often engineers accept vs. dismiss suggestions), (4) Free-to-Pro conversion rate and days-to-upgrade, (5) Churn rate by feature cohort (Tab-only users vs. Composer users vs. Agent users)
+- **What this tells us**: Cursor is optimizing for cognitive lock-in, measured by feature progression depth. This metric reveals they understand that habit formation isn't about sticky sessions — it's about workflow reorganization. An engineer who's only used Tab hasn't locked in; one who's reorganized their entire coding loop around Cursor's escalation path has. The metric strategy also reveals their confidence in the growth loop: they're willing to let low-feature-depth users churn because they know the high-value cohort is proportionally smaller but vastly more valuable and durable.
+
+---
+
 ## Jobs to Be Done
 
 | Job type | The job | What users hired before | Why this product wins this job |

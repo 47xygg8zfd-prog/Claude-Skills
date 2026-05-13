@@ -10,6 +10,15 @@ Linear is optimizing for the experience of the person doing the work, not the pe
 
 ---
 
+## Key Metrics & What They Reveal
+
+- **North Star metric**: Monthly active engineers using Linear, weighted by daily session counts and actions per session (a usage depth metric, not volume)
+- **How you know**: The Cmd+K command palette is the central hub of navigation; time-to-interaction is listed as a primary value proposition; the opinionated defaults reduce the number of configuration decisions teams need to make, indicating they're optimizing for adoption friction, not feature comprehensiveness
+- **Input metrics**: Time to first issue creation, command palette usage rate, Cycle adoption rate (teams running structured sprints), keyboard shortcut uptake, time-per-interaction, net new issues per sprint, team churn rate
+- **What this tells us**: Linear is optimizing for engineer daily activation and depth of integration into team workflow, not breadth of feature coverage. The metric reveals a bet that if ICs love the tool, adoption scales without top-down mandate — which trades feature flexibility for coherence. Teams that buy into the opinionated model stay for years; teams that need to customize are a leakage point. This is a deliberate trade-off that works at startup/mid-market scale and becomes a vulnerability at enterprise.
+
+---
+
 ## Jobs to Be Done
 
 | Job type | The job | What users hired before | Why this product wins this job |

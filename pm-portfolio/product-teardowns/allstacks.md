@@ -10,6 +10,15 @@ Allstacks is optimizing for executive anxiety reduction. Every product decision 
 
 ---
 
+## Key Metrics & What They Reveal
+
+- **North Star metric**: Forecast confidence — the probability (expressed as a percentage) that a given roadmap milestone or program will be delivered on schedule, calculated via Monte Carlo simulation over historical velocity data.
+- **How you know**: The executive dashboard leads with probability statements ("78% likely to hit Q2 launch") rather than engineering metrics. Risk reports proactively surface initiatives trending below a confidence threshold. The entire product is architected around producing a single credible number that can be presented in a board meeting.
+- **Input metrics**: Historical velocity per team, ticket completion rates, scope changes, and estimated effort per roadmap initiative. Unlike LinearB and Swarmia, Allstacks' input metrics are business-oriented rather than engineering-oriented — they're measuring what gets delivered relative to what was committed.
+- **What this tells us**: Allstacks is betting that executives need confidence in delivery predictability more than they need insights into why delivery is slow. They're optimizing for executive comfort and board-room credibility, not for improving how teams work. This positions them as a risk management tool rather than an operational improvement tool — the outcome they're trying to move is executive career protection, not team productivity. This explains their enterprise-only, executive-led sales motion and their willingness to accept a slow, implementation-heavy onboarding process.
+
+---
+
 ## Jobs to Be Done
 
 | Job type | The job | What users hired before | Why this product wins this job |
