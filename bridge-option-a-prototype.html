@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridge — Technical Translator for PMs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f8f9fa;
+            color: #1a1a1a;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            min-height: 100vh;
+            background: white;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: #f5f6f7;
+            padding: 20px;
+            border-right: 1px solid #e0e1e6;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .new-btn {
+            display: block;
+            width: 100%;
+            padding: 10px 12px;
+            background: #5B65F5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: background 0.2s;
+        }
+
+        .new-btn:hover {
+            background: #4650d0;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: #d0d1d6;
+            margin: 20px 0;
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #444;
+            margin-bottom: 6px;
+            transition: background 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background: #e8e9ed;
+        }
+
+        .sidebar-item.active {
+            background: #e0e3ff;
+            color: #5B65F5;
+            font-weight: 500;
+        }
+
+        .star {
+            color: #ffc107;
+            font-size: 12px;
+        }
+
+        /* Main content */
+        .main {
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        /* Screen visibility */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Landing screen */
+        .landing {
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .landing-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+        }
+
+        .landing-subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .paste-box {
+            width: 100%;
+            min-height: 180px;
+            padding: 20px;
+            border: 2px solid #d0d1d6;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #1a1a1a;
+            resize: vertical;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+
+        .paste-box:focus {
+            outline: none;
+            border-color: #5B65F5;
+            box-shadow: 0 0 0 3px rgba(91, 101, 245, 0.1);
+        }
+
+        .paste-placeholder {
+            color: #999;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #5B65F5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4650d0;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #5B65F5;
+            border: 2px solid #5B65F5;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f6ff;
+        }
+
+        .example-link {
+            color: #5B65F5;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .example-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Result screen */
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e1e6;
+        }
+
+        .result-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #5B65F5;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .snippet-box {
+            background: #f5f6f7;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #444;
+            border-left: 4px solid #5B65F5;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, #e0e1e6 0%, transparent 100%);
+            margin: 30px 0;
+        }
+
+        .explanation-section h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+
+        .explanation-text {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .confidence-bar {
+            margin: 20px 0;
+        }
+
+        .confidence-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .confidence-level {
+            color: #5B65F5;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e1e6;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #5B65F5;
+            border-radius: 3px;
+        }
+
+        .confidence-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+            padding: 8px 10px;
+            background: #f5f6f7;
+            border-radius: 4px;
+            border-left: 2px solid #ffc107;
+        }
+
+        .go-deeper {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            border: 1px solid #d0d1d6;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #5B65F5;
+            margin: 20px 0;
+            transition: all 0.2s;
+        }
+
+        .go-deeper:hover {
+            background: #f5f6ff;
+        }
+
+        .go-deeper.expanded {
+            border-color: #5B65F5;
+            background: #f5f6ff;
+        }
+
+        .deeper-content {
+            display: none;
+            background: #f9f9fb;
+            padding: 16px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #444;
+        }
+
+        .deeper-content.show {
+            display: block;
+        }
+
+        .deeper-content h4 {
+            font-weight: 600;
+            margin-top: 12px;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .deeper-content ul {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .deeper-content li {
+            margin-bottom: 6px;
+        }
+
+        .deeper-content code {
+            background: #e8e9ed;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e1e6;
+        }
+
+        .action-btn {
+            padding: 8px 14px;
+            background: white;
+            border: 1px solid #d0d1d6;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #444;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #f5f6f7;
+            border-color: #bbb;
+        }
+
+        /* Conversation screen */
+        .conversation-thread {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .qa-pair {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .question {
+            background: #f0f1ff;
+            padding: 14px;
+            border-radius: 6px;
+            border-left: 4px solid #5B65F5;
+        }
+
+        .question-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #5B65F5;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .answer {
+            background: #f5f6f7;
+            padding: 14px;
+            border-radius: 6px;
+            border-left: 4px solid #666;
+        }
+
+        .answer-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .follow-up-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .follow-up-input textarea {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #d0d1d6;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .follow-up-input textarea:focus {
+            outline: none;
+            border-color: #5B65F5;
+            box-shadow: 0 0 0 3px rgba(91, 101, 245, 0.1);
+        }
+
+        .send-btn {
+            padding: 12px 20px;
+            background: #5B65F5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            align-self: flex-end;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover {
+            background: #4650d0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                padding: 20px;
+            }
+
+            .landing-title {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">Bridge</div>
+            <button class="new-btn">+ New explanation</button>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Today</div>
+                <div class="sidebar-item active" onclick="showScreen('result')">• N+1 queries <span class="star">★</span></div>
+                <div class="sidebar-item" onclick="showScreen('landing')">• Idempotent APIs</div>
+                <div class="sidebar-item">• Rate limiting</div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Yesterday</div>
+                <div class="sidebar-item">• Distributed locks</div>
+                <div class="sidebar-item">• Circuit breakers</div>
+                <div class="sidebar-item">• Event sourcing</div>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <div style="padding: 10px; background: #f0f1ff; border-radius: 4px; font-size: 12px; color: #5B65F5; margin-bottom: 20px;">
+                <a href="#" style="color: inherit; text-decoration: none;">→ See team glossary</a>
+            </div>
+
+            <div style="font-size: 12px; color: #666;">
+                <div style="margin-bottom: 10px;">Settings</div>
+                <div style="margin-bottom: 5px;"><a href="#" style="color: #5B65F5; text-decoration: none;">Privacy & sharing</a></div>
+                <div><a href="#" style="color: #5B65F5; text-decoration: none;">Help</a></div>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="main">
+            <!-- Landing Screen -->
+            <div id="landing-screen" class="screen active">
+                <div class="landing">
+                    <h1 class="landing-title">Bridge</h1>
+                    <p class="landing-subtitle">Understand tech. Act faster.</p>
+
+                    <textarea class="paste-box" placeholder="Paste a Slack message, PR comment, architecture doc, error log, anything technical..."></textarea>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="showScreen('result')">Explain →</button>
+                    </div>
+
+                    <div>
+                        <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Or try an example:</p>
+                        <button class="btn btn-secondary" onclick="showScreen('result')">Load example: "N+1 query"</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Screen -->
+            <div id="result-screen" class="screen">
+                <div class="result-header">
+                    <span class="result-title">Your technical snippet:</span>
+                    <button class="back-btn" onclick="showScreen('landing')">← Back</button>
+                </div>
+
+                <div class="snippet-box">
+                    This will cause N+1 queries on the customer list endpoint if we don't batch the user lookups.
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="explanation-section">
+                    <h3>Plain English Explanation:</h3>
+
+                    <div class="explanation-text">
+                        The code is about to load data inefficiently. Right now, it's fetching one customer, then one by one it's fetching data for each customer. That's a lot of separate database calls — one per customer.
+                    </div>
+
+                    <div class="explanation-text">
+                        The fix: fetch all the user data in one query instead of looping. That's "batching."
+                    </div>
+
+                    <div class="explanation-text">
+                        <strong>Why it matters:</strong> The load time goes from "1 second" to "0.1 seconds" if you have 100 customers.
+                    </div>
+
+                    <div class="confidence-bar">
+                        <div class="confidence-label">
+                            <span>Confidence:</span>
+                            <span class="confidence-level">88%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 88%"></div>
+                        </div>
+                        <div class="confidence-note">
+                            🔔 This explanation is based on database patterns and is high-confidence, but always check with your backend engineer.
+                        </div>
+                    </div>
+                </div>
+
+                <button class="go-deeper" onclick="toggleDeeper()">▼ Go deeper (technical details)</button>
+
+                <div class="deeper-content" id="deeper-content">
+                    <h4>Technical Deep Dive:</h4>
+                    <p>
+                        The "N+1 query problem" is a specific performance anti-pattern in ORM-based code (like SQLAlchemy, Django ORM, Sequelize).
+                    </p>
+
+                    <h4>What's happening:</h4>
+                    <ul>
+                        <li>You write: <code>users = User.find(customer_id)</code></li>
+                        <li style="margin-top: 8px;">This is 1 query.</li>
+                    </ul>
+
+                    <h4>Then in a loop:</h4>
+                    <div style="background: #e8e9ed; padding: 10px; border-radius: 4px; margin: 10px 0; font-family: 'Monaco', monospace; font-size: 12px; overflow-x: auto;">
+for user in users:<br/>
+&nbsp;&nbsp;profile = Profile.find(user.profile_id)
+                    </div>
+
+                    <p>
+                        If you have 100 users, that's 100 more queries. Total: 101 queries (1 + N).
+                    </p>
+
+                    <h4>The fix (eager loading):</h4>
+                    <div style="background: #e8e9ed; padding: 10px; border-radius: 4px; margin: 10px 0; font-family: 'Monaco', monospace; font-size: 12px; overflow-x: auto;">
+users = User.includes(:profile).find(customer_id)
+                    </div>
+
+                    <p>
+                        This batches the Profile lookups into 1 query. Total: 2 queries instead of 101.
+                    </p>
+
+                    <h4>Why the engineer flagged it:</h4>
+                    <ul>
+                        <li>Scales poorly (worst as user_count grows)</li>
+                        <li>Can hit DB connection limits</li>
+                        <li>Makes the request feel slow to the PM dashboard</li>
+                    </ul>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn">📋 Copy</button>
+                    <button class="action-btn" onclick="showScreen('share')">📤 Share with team</button>
+                    <button class="action-btn" onclick="showScreen('conversation')">💬 Ask follow-up</button>
+                </div>
+            </div>
+
+            <!-- Conversation Screen -->
+            <div id="conversation-screen" class="screen">
+                <div class="result-header">
+                    <span class="result-title">Conversation</span>
+                    <button class="back-btn" onclick="showScreen('result')">← Back</button>
+                </div>
+
+                <div class="conversation-thread">
+                    <div class="qa-pair">
+                        <div class="question">
+                            <div class="question-label">Q:</div>
+                            This will cause N+1 queries on the customer list endpoint if we don't batch the user lookups.
+                        </div>
+                        <div class="answer">
+                            <div class="answer-label">Bridge:</div>
+                            [Full explanation above]
+                        </div>
+                    </div>
+
+                    <div class="qa-pair">
+                        <div class="question">
+                            <div class="question-label">Your follow-up:</div>
+                            But won't eager loading return duplicate data?
+                        </div>
+                        <div class="answer">
+                            <div class="answer-label">Bridge:</div>
+                            <div style="margin-bottom: 10px;">
+                                Not with modern ORMs. The ORM deduplicates for you — you get one object per user, not one per (user, profile) pair.
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                But the engineer is thinking about it because it's a real concern in raw SQL. Good instinct.
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                This is worth clarifying in code review: ask them "does this ORM deduplicate?" to show you're thinking like an engineer.
+                            </div>
+                            <div class="confidence-label" style="border-top: 1px solid #d0d1d6; padding-top: 10px; margin-top: 10px;">
+                                <span>Confidence: 82%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="follow-up-input">
+                    <textarea placeholder="Ask another follow-up..."></textarea>
+                    <button class="send-btn">Send</button>
+                </div>
+            </div>
+
+            <!-- Share Screen (simplified) -->
+            <div id="share-screen" class="screen">
+                <div class="result-header">
+                    <span class="result-title">Share this explanation</span>
+                    <button class="back-btn" onclick="showScreen('result')">← Back</button>
+                </div>
+
+                <div style="background: #f0f1ff; padding: 16px; border-radius: 6px; margin-bottom: 20px;">
+                    <div style="font-size: 13px; line-height: 1.6; color: #444;">
+                        <strong>Your explanation (confident 88%):</strong><br>
+                        "The code is about to load data inefficiently..."
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <div style="font-weight: 600; margin-bottom: 12px; color: #1a1a1a;">Share as:</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="share" checked style="margin-right: 10px;">
+                            <span>Private (only me)</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="share" style="margin-right: 10px;">
+                            <span>Slack message (copy link)</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="share" style="margin-right: 10px;">
+                            <span>Email to team</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="share" style="margin-right: 10px;">
+                            <span>Add to Bridge shared glossary</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary">Share →</button>
+                    <button class="btn btn-secondary" onclick="showScreen('result')">Cancel</button>
+                </div>
+
+                <div style="background: #f5f6f7; padding: 14px; border-radius: 6px; margin-top: 20px; font-size: 13px; color: #666;">
+                    <strong>Your privacy:</strong> Bridge never shares your explanations without your explicit choice.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showScreen(screenName) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            // Show selected screen
+            document.getElementById(screenName + '-screen').classList.add('active');
+
+            // Reset deeper content
+            const deeperContent = document.getElementById('deeper-content');
+            if (deeperContent) {
+                deeperContent.classList.remove('show');
+                const btn = document.querySelector('.go-deeper');
+                if (btn) btn.classList.remove('expanded');
+            }
+        }
+
+        function toggleDeeper() {
+            const content = document.getElementById('deeper-content');
+            const btn = document.querySelector('.go-deeper');
+
+            content.classList.toggle('show');
+            btn.classList.toggle('expanded');
+
+            if (content.classList.contains('show')) {
+                btn.textContent = '▲ Hide technical details';
+            } else {
+                btn.textContent = '▼ Go deeper (technical details)';
+            }
+        }
+    </script>
+</body>
+</html>
