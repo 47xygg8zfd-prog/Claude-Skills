@@ -10,6 +10,15 @@ Look at the defaults and the incentives: Spotify is optimizing for time-in-app, 
 
 ---
 
+## Key Metrics & What They Reveal
+
+- **North Star metric**: Monthly active users × streams per session (effectively, total listening hours)
+- **How you know**: The weekly Monday Discover drop creates a recurring attendance ritual; shuffle restrictions on free tier are engineered to increase session frequency; every algorithmic surface prioritizes keeping you in the app over quality of discovery
+- **Input metrics**: Session duration, daily active users, skip rate on recommendations, repeat listening on Daily Mixes, free-to-paid conversion rate, engagement with Wrapped
+- **What this tells us**: Spotify is optimizing for consumption volume and habit formation, not for expanding users' musical horizons. The product is architected around maximizing predictable, repeatable listening time — which rewards personalization-at-margin over genuine discovery. High engagement metrics can coexist with users feeling "stuck" in taste stagnation because the metric doesn't measure the quality of taste growth, only the frequency of streaming.
+
+---
+
 ## Jobs to Be Done
 
 | Job type | The job | What users hired before | Why this product wins this job |

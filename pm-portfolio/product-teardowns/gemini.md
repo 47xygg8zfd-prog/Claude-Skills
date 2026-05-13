@@ -10,6 +10,15 @@ Gemini is not optimizing for AI utility. It's optimizing for Google's survival i
 
 ---
 
+## Key Metrics & What They Reveal
+
+- **North Star metric**: Workspace integration invocation frequency — specifically, how often users trigger Gemini inside Gmail, Docs, or other Google surfaces versus opening gemini.google.com directly
+- **How you know**: The growth loop is designed to move users away from the standalone chat interface and into passive discovery of Workspace features. Every design choice — the buried integration points, the sparkle icons, the gentle "Gemini can help here" suggestions — is architected to increase ambient invocation rate rather than deliberate session opens.
+- **Input metrics**: Likely measuring (1) Email summary actions per Mail user per week, (2) "Draft with Gemini" adoption in Docs as a % of eligible documents, (3) Free tier to Google One AI Premium upgrade conversion and the Workspace integration usage of converters vs. non-converters, (4) Return rate for Workspace-integrated users vs. gemini.google.com–only users
+- **What this tells us**: Google is optimizing for retention through ambient integration rather than habit formation through standalone value. This metric choice reveals their strategic bet — that reach + passive exposure will eventually overcome weak activation if the distribution advantage is large enough. It also reveals the constraint: if the Workspace advantage was overwhelming, they wouldn't need to optimize for frequency; one great summarization would create pull. Instead, they're measuring frequency because they're betting on compounding small exposures rather than single aha moments.
+
+---
+
 ## Jobs to Be Done
 
 | Job type | The job | What users hired before | Why this product wins this job |

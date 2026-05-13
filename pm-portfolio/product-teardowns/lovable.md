@@ -10,6 +10,15 @@ Lovable is optimizing for time-to-wow, and it's winning. The core product loop �
 
 ---
 
+## Key Metrics & What They Reveal
+
+- **North Star metric**: 90-day retention among users who've connected Supabase and deployed a real app, measured as % who initiate at least one new project or iteration round
+- **How you know**: The retention curve bifurcates sharply at the data-persistence line. Users who just build throwaway prototypes churn after 1–2 projects; users who integrate Supabase show dramatically higher retention because the switching cost becomes real. The divergence is so stark that Lovable is implicitly measuring two different products' retention and optimizing for one.
+- **Input metrics**: Likely measuring (1) Time-to-Supabase-connection as a % of users who reach iteration 3+, (2) App deployment rate among projects started, (3) Real-data-connected apps as a % of total apps created, (4) Credit consumption per user cohort (prototype-only vs. deployed-with-data), (5) Export-to-GitHub rate as a success metric, not a churn metric, (6) Upgrade funnel triggered by credit exhaustion vs. by expansion of capabilities
+- **What this tells us**: Lovable is optimizing for the "real product" outcome, not the "creation tool" outcome, but their monetization model is still priced for the latter. This metric choice reveals an internal conflict: they want users to stay and iterate and maintain, but they charge per creation session, which penalizes iteration. It also reveals that their actual north star — the outcome they care most about — is shifted away from "number of apps created" and toward "quality of apps that become real," which is a product strategy statement about their intended market position even if the credit model doesn't yet align with that strategy.
+
+---
+
 ## Jobs to Be Done
 
 | Job type | The job | What users hired before | Why this product wins this job |

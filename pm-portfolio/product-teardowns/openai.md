@@ -12,6 +12,24 @@
 
 ---
 
+## Key Metrics & What They Reveal
+
+### ChatGPT
+
+- **North Star metric**: Plus/Pro subscriber count + Plus monthly active user churn rate (retention, not acquisition)
+- **How you know**: The upgrade trigger is engineered precision — you hit a usage cap mid-task; memory and Projects are designed to accumulate context and switching cost; the recent addition of guided prompts (starter suggestions) indicates acknowledgment that the blank canvas isn't driving aha moments reliably
+- **Input metrics**: Session frequency (weekly active users), upgrade conversion rate at rate-limit moment, memory recall accuracy, Projects adoption rate, time-to-first-value, day-7 and day-30 retention by user cohort
+- **What this tells us**: ChatGPT's retention is fragile despite massive brand awareness. The metric choice reveals the core problem: acquisition is nearly free (brand), but retention requires building genuine habit or accumulated context. The blank canvas works for power users but fails for the majority who arrive without a specific task. OpenAI is betting that memory features and Projects will create switching cost, but execution is inconsistent — recall is unreliable, which erodes the trust required to make context-dependent features sticky.
+
+### API
+
+- **North Star metric**: Monthly tokens consumed across all production customers + dollar volume of accounts with >$100k annual spend
+- **How you know**: Pricing is consumption-based with volume discounts that reward scale; the developer docs and example code emphasize first-integration speed, suggesting they're optimizing for adoption and embedding; OpenAI's public statements prioritize enterprise revenue and model reliability over feature breadth
+- **Input metrics**: Developer signup-to-first-API-call time, production integration rate (% of trial accounts that ship to production), monthly active API keys, cost per customer (tracking whether customers scale up or plateau), churn signals (evaluations of competitor models, cost-reduction conversations, migration feasibility studies)
+- **What this tells us**: The API is optimized for developer adoption and long-term lock-in through production embedding and switching cost accumulation. High consumption volume indicates successful integration into customers' core products, which makes replacement risky. This metric choice reveals a fundamental tension: the best API customers are vertical AI products (Cursor, Perplexity, Harvey) that will eventually compete with ChatGPT on the consumer side. OpenAI is architecting its own future competition.
+
+---
+
 ## Jobs to Be Done
 
 ### ChatGPT
