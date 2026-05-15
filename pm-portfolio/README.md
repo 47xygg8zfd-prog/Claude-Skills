@@ -28,14 +28,20 @@ End-to-end product work on Pulse's core engagement surface. Shows how I frame pr
 
 ### 2. [Product Teardowns](./product-teardowns/)
 
-Competitive analysis of Pulse's three main competitors. Shows market awareness, UX intuition, and strategic thinking — including honest assessments of where competitors win.
+Nine product teardowns using a consistent framework: what the product really optimizes for, key metrics and what they reveal, JTBD, growth loop, retention mechanics, monetization alignment, strategic feature bets, weaknesses, and what I'd build next. Includes honest assessments of where competitors win.
 
-| Teardown | Threat level | Key finding |
-|----------|-------------|-------------|
-| [LinearB](./product-teardowns/linearb.md) | High | Best-in-class git analytics; weak on actionability |
-| [Swarmia](./product-teardowns/swarmia.md) | Medium | Strong flow metrics; requires a data analyst to interpret |
-| [Allstacks](./product-teardowns/allstacks.md) | Low | Serves execs, not managers — different buyer entirely |
-| [Competitive Matrix](./product-teardowns/competitive-matrix.md) | — | 15-feature comparison across all four products |
+| Teardown | Category | Key finding |
+|----------|----------|-------------|
+| [LinearB](./product-teardowns/linearb.md) | Direct competitor | Best-in-class git analytics; weak on actionability |
+| [Swarmia](./product-teardowns/swarmia.md) | Direct competitor | Strong flow metrics; requires a data analyst to interpret |
+| [Allstacks](./product-teardowns/allstacks.md) | Adjacent competitor | Serves execs, not managers — different buyer entirely |
+| [Spotify](./product-teardowns/spotify.md) | Consumer benchmark | Habit formation and personalization at scale |
+| [Linear](./product-teardowns/linear.md) | Adjacent tool | Opinionated UX as a growth strategy |
+| [OpenAI](./product-teardowns/openai.md) | Platform | Developer ecosystem and API-first distribution |
+| [Gemini](./product-teardowns/gemini.md) | Platform | Distribution leverage via Google integration |
+| [Cursor](./product-teardowns/cursor.md) | Adjacent tool | Workflow integration as the moat |
+| [Lovable](./product-teardowns/lovable.md) | Emerging tool | No-code AI product creation and viral loops |
+| [Competitive Matrix](./product-teardowns/competitive-matrix.md) | — | 19-feature comparison across all products |
 
 ---
 
@@ -73,6 +79,8 @@ Templates and frameworks that show how I structure product work. These aren't as
 **If you want to see how I think about metrics**: Start with the [North Star Metric](./metrics-frameworks/north-star-metric.md) and the "Where to Focus" section of the [Metric Tree](./metrics-frameworks/metric-tree.md).
 
 **If you want to see how I run experiments**: The [Experiment Design](./case-studies/pulse-digest-feature/03-experiment-design.md) shows full A/B test methodology including the sample size calculation.
+
+**If you want to see market awareness**: The [Product Teardowns](./product-teardowns/) show how I analyze competitors — including honest assessments of where they win and what I'd build if I were their PM.
 
 **If you want to see my working style**: The [PM Operating System](./pm-operating-system/) shows the templates and frameworks I use daily — and the opinionated commentary around each one.
 
