@@ -108,6 +108,7 @@ python pdlc_orchestrator.py --goal "..." --output-dir ./digest/ --stages discove
 | [data-scientist](data_scientist.py) | Measurement plans, analysis plans, experiment results interpretation, ML scoping, data storytelling | measurement / analysis / experiment-results / ml-scoping / storytelling / all |
 | [spec-driven-dev](spec_driven_dev.py) | OpenAPI specs, JSON schemas, interface contracts, Given/When/Then acceptance specs, mock payloads, test matrices | openapi / schema / contract / acceptance / mock / test-matrix / all |
 | [analytics-expert](analytics_expert.py) | Validate metrics are measurable, produce instrumentation plans, write SQL queries, audit event schemas, build metric dictionaries | instrumentation / sql / audit / dictionary / all |
+| [e2e-tester](e2e_tester.py) | Generate end-to-end regression test suites for Claude agents and skills — structural smoke tests, semantic section checks, LLM-as-judge scoring, and test plans | structural / semantic / plan / all |
 
 ---
 

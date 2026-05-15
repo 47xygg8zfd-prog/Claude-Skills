@@ -37,6 +37,7 @@ A complete collection of Claude skills tailored for product management workflows
 | `roadmap` | Quarterly roadmaps, Now/Next/Later views, scenario modeling (what if we delay X?) | "build a roadmap", "roadmap for Q3", "sequence these features", "what if we delay", "capacity planning" |
 | `pricing-packaging` | Tier design, feature gating matrix, competitive pricing, packaging scenarios | "design our pricing tiers", "should this be in the base plan", "pricing analysis for", "feature gating matrix" |
 | `interview-analysis` | Theme extraction, JTBD maps, OST input, personas from raw interview notes | "synthesize these interviews", "find themes in this research", "JTBD from these notes", "build personas from" |
+| `e2e-testing` | Generate regression test suites for Claude agents and skills — structural smoke tests, semantic section checks, LLM-as-judge scoring | "create a regression suite", "test the agents", "e2e tests for", "validate agent output", "golden file tests" |
 
 ## How to Install
 
