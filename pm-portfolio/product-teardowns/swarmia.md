@@ -1,135 +1,75 @@
 # Swarmia Teardown
 
-> **TL;DR**: Swarmia is the most intellectually honest product in the engineering analytics space — they openly cite their academic framework, publish their pricing, and refuse to oversimplify. That integrity is also why they'll stay niche.
+**Category**: Engineering effectiveness / flow metrics
+**Threat level**: Medium
+**One-line**: Flow metrics and team health for engineering orgs that want to improve, not just measure.
 
 ---
 
-## What This Product Is Really Optimizing For
+## The Problem They Solve
 
-Swarmia is optimizing for engineering culture, not individual manager productivity. The product is built around the belief that teams fail because of systemic friction — too much WIP, poorly scoped work, violated working agreements — and that the right lever is surfacing those patterns to people who care about fixing them. Every design choice points at a specific buyer: the engineering manager or VP who has already read Mik Kersten's *Project to Product*, already runs structured retrospectives, and already thinks about developer experience as a strategic investment. Swarmia doesn't try to make you care about flow metrics; it assumes you already do. That's a coherent bet, but it's also a narrow one.
+Swarmia's thesis is that engineering teams fail not because of talent gaps but because of systemic friction — too much WIP, poorly scoped work, interrupted flow. Their product surfaces "flow metrics" (a framework popularized by Mik Kersten's Project to Product book) alongside DORA metrics, and packages them for engineering teams and their managers. The pitch is: see where flow breaks down, fix the system, improve delivery.
 
----
-
-## Key Metrics & What They Reveal
-
-- **North Star metric**: Flow efficiency — the percentage of engineering time spent on value-creating work (features and planned tech debt) versus unplanned work and interrupts, framed through the Project to Product framework.
-- **How you know**: The investment distribution view is the first dashboard users see post-onboarding, with flow efficiency as the composite score. The entire onboarding narrative is built around understanding how engineering time is "invested," not just consumed. Working agreements are explicitly tied to maintaining flow efficiency targets.
-- **Input metrics**: Unplanned work percentage, WIP levels, deployment frequency, PR review time, and working agreement adherence rates. These are the sub-metrics that teams actively track weekly to maintain flow efficiency targets.
-- **What this tells us**: Swarmia is betting that smart engineering teams care less about individual PR metrics and more about systemic efficiency — how much of their effort is going to the work that was planned versus reactive firefighting. They're optimizing for team health and predictability, not raw speed. This makes them well-positioned with CTOs who view engineering as a system, but it creates a literacy prerequisite that excludes managers who haven't internalized the flow framework.
+The segment sits between LinearB and Allstacks: engineering managers and VPs of Engineering at product-led growth companies (roughly 50–500 engineers), often with a strong engineering culture that values process improvement and invests in developer experience. Swarmia customers tend to be companies already doing retros, running health checks, and thinking about engineering effectiveness as a strategic lever — not just a reporting need.
 
 ---
 
-## Jobs to Be Done
+## Day 1 Onboarding
 
-| Job type | The job | What users hired before | Why this product wins this job |
-|----------|---------|------------------------|-------------------------------|
-| Functional | Understand how engineering time is allocated across features, tech debt, and unplanned work | Manual Jira exports, gut feel, occasional eng lead survey | Investment distribution backed by the flow framework gives managers a defensible, methodology-grounded breakdown they can present to leadership |
-| Emotional | Feel like a systems thinker running an efficient team, not a firefighter reacting to output | Anecdotal performance reviews, tribal knowledge | Flow efficiency scores and working agreements tracking give managers the language of process maturity — it's an identity product as much as a data product |
-| Social | Hold the team accountable to agreed norms without being the heavy | Ad-hoc Slack callouts, retrospective action items that never close | Working agreements turn abstract norms into tracked commitments — managers can point to the data instead of making it personal |
+Swarmia connects GitHub and Jira (or Linear), pulls historical data, and surfaces flow metrics within the first session. The onboarding is smoother than LinearB's because Swarmia is more opinionated about defaults — you get a pre-configured dashboard rather than a blank canvas. The tradeoff: less flexibility upfront, but a faster path to a first meaningful view.
+
+Their onboarding explicitly frames the product around "investments" — how is engineering time allocated across new features, quality work, and unplanned work? That framing does useful work: it orients managers toward the right question before they've even configured anything. It's a small UX detail that signals product maturity.
 
 ---
 
-## Target Segment
+## Core Retention Loop
 
-**Primary**: Engineering managers and VPs of Engineering at product-led SaaS companies with 50–500 engineers, strong engineering culture, already running structured retrospectives and thinking about developer experience. Often companies that have migrated to Linear or have non-standard toolchains.
+Swarmia's retention is built around the weekly team health check. Managers are nudged to review team health scores — a composite of WIP levels, review cycle times, and deployment frequency — once per week. The product also generates "nudges": lightweight prompts surfaced in Slack when a specific metric crosses a threshold. High WIP? Swarmia tells you. PR sitting unreviewed for 48 hours? Swarmia flags it.
 
-**Secondary**: Engineering effectiveness teams and DevEx leads at larger companies who are trying to systematize how teams improve — Swarmia gives them a framework and tooling in one product.
-
-**Explicitly not served**: Time-poor managers who want to be told what to do. Managers at companies with poor Jira hygiene or fragmented toolchains. The mid-market EM who hasn't heard of flow metrics and doesn't have the context to interpret flow efficiency scores without a guide. Swarmia is explicitly deprioritizing the majority of engineering managers in favor of the minority who are already primed for this kind of product.
+The Slack integration is central to their stickiness, similar to LinearB's WorkerB, but Swarmia's nudges are slightly more actionable — they tell you what crossed a threshold, not just that a threshold was crossed.
 
 ---
 
-## Onboarding & The Aha Moment
+## Monetization
 
-**Day 1 flow**: Connect GitHub + Jira (or Linear) → Swarmia pulls historical data → pre-configured dashboard appears with investment distribution and flow metrics → optionally define working agreements → Slack integration for nudges.
-
-**The aha moment**: The investment distribution view — seeing the percentage of engineering time spent on features vs. tech debt vs. unplanned work, framed in flow framework language, in the first session. For managers who've been arguing about tech debt allocation on gut feel, seeing it quantified is genuinely useful.
-
-**Time to aha**: Fast relative to LinearB. The pre-configured defaults mean you don't start with a blank canvas. The trade-off is that the aha requires you to understand what flow efficiency means — managers unfamiliar with the framework may see the dashboard and feel nothing.
-
-**What they're betting on**: That the managers willing to try Swarmia are already literate enough in flow metrics to recognize what they're looking at. It's a self-selecting onboarding bet — they're not trying to educate every manager, they're trying to delight the ones who are already converted.
+Per-team, tiered by number of engineers. Swarmia publishes pricing, which is unusual in this space and signals a more product-led sales motion. Starter tier is accessible for small teams; growth and enterprise tiers add integrations, advanced reporting, and SSO. The transparent pricing makes it easier for a manager to expense without going through procurement — a meaningful advantage in the mid-market.
 
 ---
 
-## The Growth Loop
+## Feature Highlights
 
-```
-Manager connects GitHub + Jira (smooth, opinionated onboarding)
-      ↓
-Investment distribution view surfaces a tech debt conversation already overdue (aha)
-      ↓
-Manager defines working agreements with team → team gets Slack nudges
-      ↓
-Engineers see nudges in Slack → working agreement adherence improves
-      ↓
-Manager attributes improvement to Swarmia → advocates internally
-      ↓
-VP sees manager's use case → buys for other teams (team expansion)
-```
+**Investment distribution** — Tracks how engineering time breaks down across features, tech debt, bugs, and unplanned work. Backed by the "Project to Product" flow framework. Gives managers a defensible way to argue for tech debt investment.
 
-**Loop type**: Product-led with bottom-up advocacy driving team expansion
+**Working agreements** — Teams can define explicit norms (e.g., "PRs should be reviewed within 24 hours") and Swarmia tracks adherence. This turns abstract best practices into measurable commitments. Smart.
 
-**Loop strength**: Moderate. The loop works well when the product delivers an early win (usually the investment distribution insight) that the manager can share with a VP. The weakness is that the loop depends on the manager being able to articulate the value in flow framework terms — and Swarmia doesn't always give them the language to do that.
+**Team health overview** — A composite score across multiple dimensions that gives managers a single view of whether their team is in a healthy delivery rhythm. Not as granular as LinearB, but more interpretable for non-data-native managers.
 
-**Leakage point**: Working agreements setup. This is their most differentiated feature and the one most teams skip. Managers who don't define working agreements never get the full retention value — the nudges are context-free without them, and the product becomes just another metrics dashboard.
+**Automated nudges** — Slack-based alerts tied to specific metric thresholds, with enough context to understand what happened without opening the dashboard.
+
+**GitHub + Linear support** — One of the few tools in this space with strong Linear integration, which matters for companies that have moved off Jira.
 
 ---
 
-## Retention Mechanics
+## Weaknesses / Opportunities
 
-**What brings users back**: Slack nudges tied to metric thresholds — high WIP alerts, PRs sitting unreviewed past 48 hours, flow efficiency drops. More actionable than LinearB's nudges because they include context about what crossed a threshold, not just that something did.
+Swarmia's biggest weakness is that it still requires interpretation. The flow metrics framework is powerful, but it's not mainstream knowledge — managers who haven't read Mik Kersten need to be educated before they can use the data. The product does some of this work, but not enough. A manager who opens Swarmia for the first time and sees "flow efficiency: 34%" has no idea whether that's good or bad, or what to do about it.
 
-**Retention curve shape**: Gradual decline for managers who don't set up working agreements; sticky plateau for managers who do. The working agreements feature creates a qualitatively different product experience — it's the dividing line between Swarmia as a dashboard and Swarmia as a team operating system.
+The working agreements feature is underused because teams have to define their own norms before the tracking is meaningful. That creates a chicken-and-egg problem: the managers who would benefit most from having explicit working agreements are often the ones who haven't defined them yet.
 
-**The habit they're building**: The weekly team health review — a structured 10-minute check on whether the team's working agreements are being met and whether flow metrics are moving in the right direction. It's a more intentional habit than LinearB's standup-embedded loop, which means it's higher value but harder to form.
-
-**Churn signals**: Working agreements left undefined after two weeks, Slack nudges getting muted, flow efficiency scores not being discussed in retrospective notes.
+There's also a gap at the individual level — Swarmia is deliberately team-level, which keeps it out of performance management territory, but it means managers can't easily identify where a specific team member is bottlenecked or struggling.
 
 ---
 
-## Monetization & Strategic Alignment
+## Competitive Counter: How Pulse Wins (and Where It Doesn't)
 
-**Model**: Per-team, tiered by engineer count. Published pricing — unusual in this space.
+**Pulse wins on**: Manager-first positioning — Pulse is built for the EM, not the VP or data analyst who interprets Swarmia output. Actionable recommendations — Pulse tells you what to do; Swarmia tells you what's happening and trusts you to figure out the rest. Time-to-value — Pulse's 3-day onboarding beats Swarmia's ramp, especially for teams that aren't already fluent in flow frameworks.
 
-**Free tier purpose**: Accessible starter tier that lets a single team self-serve without procurement. This is acquisition-focused, not just habit-formation — it reduces the friction for an individual manager to try the product without VP sign-off.
+**Swarmia wins on**: Working agreements tracking — this is a genuinely differentiated feature Pulse doesn't have. Flow framework depth — Swarmia's investment distribution model is more rigorous than Pulse's sprint data framing. Published pricing — reduces friction for self-serve and inbound deals.
 
-**Upgrade trigger**: Team count and engineer count. The growth and enterprise tiers add integrations, advanced reporting, and SSO, which matter once a VP is buying for multiple teams.
-
-**Alignment check**: The published pricing is well-aligned with Swarmia's product-led motion. A manager can expense the starter tier on a corporate card without a sales conversation — that's the right experience for their buyer. The misalignment is that the features that make Swarmia genuinely sticky (working agreements, advanced flow reporting) live in the higher tiers, so the managers most likely to churn are the ones on the cheapest plan, seeing the least value.
+The competitive risk Swarmia poses is real but specific: they win deals with engineering-culture-forward companies where the manager or VP is already bought into flow frameworks and wants depth over simplicity. That's a narrower buyer than Pulse's ICP. Where Swarmia struggles is with the majority of engineering managers who are time-poor and just want to know what to do this week — that's Pulse's territory.
 
 ---
 
-## Feature Strategy
+## If I Were PM at Swarmia...
 
-| Feature | What it does | The strategic bet |
-|---------|-------------|------------------|
-| Investment distribution | Tracks engineering time across features, tech debt, bugs, and unplanned work | The tech debt conversation is already happening in every engineering org — whoever gives managers the data to have it productively wins a recurring use case |
-| Working agreements | Teams define explicit norms (e.g., "PRs reviewed within 24 hours") and Swarmia tracks adherence | Abstract best practices don't change behavior; measurable commitments do — if you can make a team's implicit norms explicit and trackable, you create accountability without management overhead |
-| Automated nudges | Slack alerts when a metric crosses a defined threshold, with enough context to understand what happened | The product dies if it requires managers to pull data daily; it survives if it pushes the right signal at the right moment |
-| Team health overview | Composite score across WIP, cycle time, and deployment frequency | A single interpretable number is more likely to get discussed in a weekly sync than a dashboard full of metrics — even if it sacrifices precision |
-
----
-
-## Weaknesses & Vulnerabilities
-
-**Framework literacy as a prerequisite**: Swarmia requires users to understand flow metrics to extract value. "Flow efficiency: 34%" means nothing to a manager who hasn't read Kersten or doesn't have a baseline for comparison. The product does some education, but not enough to onboard a flow-metrics-naive manager to usefulness in a single session. This is a meaningful ceiling on market size.
-
-**Working agreements chicken-and-egg**: The feature that makes Swarmia stickiest requires teams to do upfront work before it pays off — defining norms. The managers who would benefit most from explicit working agreements are often the ones least likely to have them. Swarmia doesn't bridge this gap, so the feature goes unused by the teams that need it most.
-
-**No individual-level visibility**: Swarmia is deliberately team-scoped, which keeps it out of performance management territory. That's a smart positioning call. But it means a manager who suspects one specific engineer is the bottleneck can't use Swarmia to investigate — they have to go back to LinearB or a custom query.
-
----
-
-## 3 Lessons for Any PM
-
-1. **Framing is a product feature**: Swarmia's onboarding explicitly frames the first view around "how is engineering time invested?" before showing a single metric. That framing does real work — it orients the user toward the right question before the data appears. Any analytics product should ask: what question do we want users to have in mind when they see the data for the first time?
-
-2. **Transparency in pricing is a positioning signal, not just a sales tactic**: Publishing pricing in a space where everyone else hides it tells a specific buyer "we're built for you to buy without a VP conversation." That's not just convenient — it's a statement about who the product is for. Pricing transparency is product strategy.
-
-3. **The best retention feature is the one users set up themselves**: Working agreements create retention not because Swarmia pushes reminders, but because the manager invested effort in defining the norms. Sunk cost creates stickiness. Any product with a configuration or setup phase should think about how that setup investment becomes a retention asset.
-
----
-
-## If I Were PM Here
-
-The clearest opportunity Swarmia is leaving on the table is the gap between flow metrics and plain-language action. A manager sees "flow efficiency dropped 12 points this sprint" and either knows what to do (Swarmia's ICP) or has no idea (everyone else). The fix is opinionated interpretation: take the metric movement, identify the likely cause from the underlying data, and surface a specific recommendation in plain language. "Your flow efficiency dropped because unplanned work spiked to 38% of engineering time this sprint. Teams in similar situations typically address this by adding a WIP limit for interrupt-driven work in the next sprint planning session." Swarmia has the aggregate data across their customer base to make those recommendations grounded, not generic. This feature would extend Swarmia's TAM from "managers who already know what flow metrics mean" to "managers who want to learn by doing" — and it would move weekly active usage, which is the metric most likely to determine whether they can hold the mid-market against a better-resourced competitor.
+The one thing I'd build next is **opinionated interpretation** — take the flow metrics output and translate it into plain-language recommendations. "Your flow efficiency dropped 12 points this sprint. The cause appears to be a spike in unplanned work. Here's how three similar teams handled it." Swarmia has the data to support this. Right now they surface the signal; they don't close the loop. Whoever builds that layer first wins the mid-market.
