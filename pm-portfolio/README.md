@@ -59,7 +59,17 @@ How I define, structure, and prioritize metrics for a SaaS product. The core pri
 
 ---
 
-### 4. [PM Operating System](./pm-operating-system/)
+### 4. [Product Roadmap](./roadmap/)
+
+A GitHub-style public roadmap for Pulse using the same labeling system as github/roadmap: release phases (exploring → in design → preview → beta → GA), quarter targets, product area, and plan tier. Includes a "What We're Not Building" table and a forward-looking statement disclaimer.
+
+| Artifact | What it shows |
+|----------|--------------|
+| [Pulse Roadmap](./roadmap/pulse-roadmap.md) | Full roadmap across all phases with feature specs, success gates, and rollout plans |
+
+---
+
+### 5. [PM Operating System](./pm-operating-system/)
 
 Templates and frameworks that show how I structure product work. These aren't aspirational — they're what I actually use.
 
@@ -81,6 +91,8 @@ Templates and frameworks that show how I structure product work. These aren't as
 **If you want to see how I run experiments**: The [Experiment Design](./case-studies/pulse-digest-feature/03-experiment-design.md) shows full A/B test methodology including the sample size calculation.
 
 **If you want to see market awareness**: The [Product Teardowns](./product-teardowns/) show how I analyze competitors — including honest assessments of where they win and what I'd build if I were their PM.
+
+**If you want to see how I communicate roadmap**: The [Product Roadmap](./roadmap/pulse-roadmap.md) shows a GitHub-style release-phase roadmap with specs, success gates, and explicit "not building" rationale.
 
 **If you want to see my working style**: The [PM Operating System](./pm-operating-system/) shows the templates and frameworks I use daily — and the opinionated commentary around each one.
 
