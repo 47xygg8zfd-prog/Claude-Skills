@@ -10,6 +10,7 @@ Run these for end-to-end workflows — they call each specialist in sequence, pa
 
 | Agent | What It Does |
 |-------|-------------|
+| [agile-team](agile_team.py) | **BMAD-style planning** — virtual agile team (Analyst → PM → Architect → Scrum Master → Developer → QA) produces a complete project bible from a rough idea; constitution-first, planning-phase only, ready to hand off to devs or AI coding agents |
 | [pdlc-orchestrator](pdlc_orchestrator.py) | **Full PDLC/SDLC** — runs all 24 stages from strategy through continuous discovery (OST, devil's advocate, MVP scoping), security threat modeling, analytics validation, agile story generation, launch readiness assessment, and retro with next-discovery feedback loop |
 | [pm-agent](pm_agent.py) | **PM workflow** — discovery → PRD → stories → experiment → stakeholder update |
 | [eng-team](eng_team.py) | **Engineering team** — tech lead → backend → frontend → QA |
