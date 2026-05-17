@@ -145,6 +145,14 @@ python pdlc_orchestrator.py --goal "..." --output-dir ./digest/ --stages discove
 
 ---
 
+## Utility Agents
+
+| Agent | What It Does |
+|-------|-------------|
+| [word-digest](word_digest.py) | Daily vocabulary email — Claude generates N sophisticated words per day (pronunciation, etymology, examples, memory tip); formats as HTML and sends via Gmail SMTP | `--count N` `--dry-run` `--preview` `--output FILE` |
+
+---
+
 ## Setup
 
 ```bash
