@@ -11,7 +11,7 @@ Usage:
     python word_digest.py --output digest.html   # save HTML to file
     python word_digest.py --dry-run              # generate + print plain text, no email
 
-Environment variables (see word-digest/config.env.example):
+Environment variables (see config.env.example):
     WORD_DIGEST_SMTP_HOST       SMTP server hostname (default: smtp.gmail.com)
     WORD_DIGEST_SMTP_PORT       SMTP port (default: 587)
     WORD_DIGEST_EMAIL_FROM      Sender address
@@ -333,14 +333,14 @@ def main():
         description="Generate and send a daily vocabulary word email digest",
         epilog="""
 cron — run daily at 7:00 AM:
-  0 7 * * * cd /path/to/Claude-Skills && export $(grep -v '^#' word-digest/config.env | xargs) && python agents/word_digest.py >> ~/word-digest.log 2>&1
+  0 7 * * * cd /path/to/word-digest && export $(grep -v '^#' config.env | xargs) && python word_digest.py >> ~/word-digest.log 2>&1
 
 Gmail app passwords (required — your regular password will not work):
   1. Enable 2-Step Verification: https://myaccount.google.com/security
   2. Generate app password: https://myaccount.google.com/apppasswords
   3. Set WORD_DIGEST_EMAIL_PASSWORD to the 16-character app password
 
-See word-digest/README.md for full setup instructions.
+See README.md for full setup instructions.
         """,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
