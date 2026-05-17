@@ -37,8 +37,7 @@ Related: manuscript (family), layered (synonym), tabula rasa (antonym),
 
 ## Prerequisites
 
-- Python 3.11+
-- `pip install anthropic`
+- Python 3.11+ (no packages to install — uses only the standard library)
 - A Gmail account with 2-Step Verification enabled
 - A Gmail App Password (your regular password will not work — see Setup)
 
