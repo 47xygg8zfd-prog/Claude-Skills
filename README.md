@@ -2,6 +2,8 @@
 
 A complete toolkit for product managers using Claude — 32 skills, working agents for every PM and engineering role, PDLC orchestrators, full product simulations, a PM portfolio, and strategic frameworks.
 
+Built by a PM who works at the intersection of platform engineering and regulated product design. The skills and agents here reflect real workflows — not theoretical frameworks. [Connect on LinkedIn →](https://www.linkedin.com/in/stephen-fischer94)
+
 ---
 
 ## What's in This Repo
