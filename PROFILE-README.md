@@ -24,9 +24,15 @@ I build enterprise messaging infrastructure and API platforms at the intersectio
 
 ---
 
+## What I'm thinking about
+
+How much of the PM role is bottlenecked on the quality and speed of the thinking — and how much of that can be systematized without losing judgment. I've been building AI-assisted tooling for PMs: not to replace the decisions, but to compress the time between "I need to think through this" and "I have something worth sharing."
+
+---
+
 ## This repo
 
-**[Claude-Skills](https://github.com/Fischer-PM/Claude-Skills)** — a complete PM toolkit built on Claude: 32 skills, 40+ working agents covering every PM and engineering role, full PDLC orchestrators, product simulations, a PM portfolio, and strategic frameworks. Built for the manager who wants to move faster without sacrificing rigor.
+**[Claude-Skills](https://github.com/Fischer-PM/Claude-Skills)** — a complete PM toolkit built on Claude: 32 skills, 40+ working agents covering every PM and engineering role, full PDLC orchestrators, product simulations, a PM portfolio, and strategic frameworks. Started as a personal productivity tool; evolved into a full operating system for product work.
 
 ---
 
