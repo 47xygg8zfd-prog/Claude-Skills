@@ -38,6 +38,7 @@ A complete collection of Claude skills tailored for product management workflows
 | `pricing-packaging` | Tier design, feature gating matrix, competitive pricing, packaging scenarios | "design our pricing tiers", "should this be in the base plan", "pricing analysis for", "feature gating matrix" |
 | `interview-analysis` | Theme extraction, JTBD maps, OST input, personas from raw interview notes | "synthesize these interviews", "find themes in this research", "JTBD from these notes", "build personas from" |
 | `e2e-testing` | Generate regression test suites for Claude agents and skills — structural smoke tests, semantic section checks, LLM-as-judge scoring | "create a regression suite", "test the agents", "e2e tests for", "validate agent output", "golden file tests" |
+| `main-character-moment` | Mine Slack for concrete work wins and log them in STAR format to a running canvas | "wins log", "brag doc", "what did I actually ship this quarter", "prep for my performance review", "build my promotion case" |
 
 ## How to Install
 

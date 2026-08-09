@@ -62,6 +62,7 @@ A complete toolkit for product managers using Claude — 32 skills, working agen
 | [`interview-analysis`](pm-skills/interview-analysis/) | Theme extraction, JTBD maps, OST input, personas from raw interview notes |
 | [`product-strategy`](pm-skills/product-strategy/) | Strategy one-pagers, where to play, how to win |
 | [`e2e-testing`](pm-skills/e2e-testing/) | Regression test suites for Claude agents — structural smoke tests, semantic section checks, LLM-as-judge scoring |
+| [`main-character-moment`](pm-skills/main-character-moment/) | Mine Slack for concrete work wins and log them in STAR format to a running canvas |
 
 ---
 
